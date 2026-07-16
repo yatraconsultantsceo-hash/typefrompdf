@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Account Settings — TypeFromPDF</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+(function(){
+  const u=JSON.parse(localStorage.getItem('tfp_c')||'null');
+  if(!u){window.location.replace('/');}
+})();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#03030d;--bg2:#08081c;--bg3:#0c0c22;
+  --border:#1a1a3a;--border2:#252550;--border3:#353568;
+  --text:#f0f0ff;--text2:#7070a8;--text3:#36365a;
+  --accent:#7c6dfa;--accent2:#9d91fb;--accent3:#bfb8ff;
+  --accent-bg:rgba(124,109,250,.08);--accent-glow:rgba(124,109,250,.28);
+  --green:#00d2a0;--green-bg:rgba(0,210,160,.08);--green-border:rgba(0,210,160,.2);
+  --red:#ff6b6b;--red-bg:rgba(255,107,107,.08);
+  --grad:linear-gradient(135deg,#6c5ce7 0%,#7c6dfa 50%,#a29bfe 100%);
+  --r8:8px;--r12:12px;--r16:16px;--r20:20px;--r24:24px;
+  --transition:all .18s cubic-bezier(.4,0,.2,1);
+}
+html{background:var(--bg);min-height:100vh;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+nav{
+  position:sticky;top:0;z-index:100;height:58px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;
+  background:rgba(3,3,13,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+}
+.nav-logo{font-size:16px;font-weight:900;letter-spacing:-.6px;}
+.nav-logo .gr{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;align-items:center;gap:8px;}
+.nav-link{font-size:13px;font-weight:600;color:var(--text2);padding:7px 14px;border-radius:var(--r8);transition:var(--transition);}
+.nav-link:hover{color:var(--text);background:var(--bg3);}
+.nav-link.active{color:var(--accent3);background:var(--accent-bg);}
+.btn-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text2);padding:7px 14px;border-radius:var(--r8);border:1px solid var(--border2);background:transparent;cursor:pointer;transition:var(--transition);text-decoration:none;}
+.btn-back:hover{color:var(--text);border-color:var(--border3);}
+.page{max-width:680px;margin:0 auto;padding:2.5rem 2rem;}
+.page-title{font-size:22px;font-weight:800;letter-spacing:-.6px;margin-bottom:2rem;}
+
+/* Settings sections */
+.settings-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r20);padding:1.75rem;margin-bottom:1.25rem;}
+.settings-section.danger-zone{border-color:rgba(255,107,107,.2);}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;}
+.section-icon{font-size:20px;}
+.section-title{font-size:15px;font-weight:700;}
+.section-sub{font-size:12.5px;color:var(--text3);margin-top:2px;}
+
+/* Form elements */
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:.4rem;letter-spacing:.8px;text-transform:uppercase;}
+.form-input{
+  width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r8);color:var(--text);font-size:14px;outline:none;transition:var(--transition);
+  font-family:'Inter',sans-serif;
+}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,250,.1);}
+.form-input::placeholder{color:var(--text3);}
+.form-input:disabled{opacity:.5;cursor:not-allowed;}
+.pw-wrap{position:relative;}
+.pw-wrap .form-input{padding-right:44px;}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:4px;transition:var(--transition);}
+.pw-eye:hover{color:var(--text2);}
+.form-actions{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap;}
+.btn-save{padding:10px 24px;border-radius:var(--r12);background:var(--grad);color:#fff;font-size:13.5px;font-weight:700;border:none;cursor:pointer;transition:var(--transition);box-shadow:0 2px 12px var(--accent-glow);}
+.btn-save:hover{opacity:.88;transform:translateY(-1px);}
+.btn-save:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-cancel{padding:10px 20px;border-radius:var(--r12);background:transparent;color:var(--text2);font-size:13.5px;font-weight:600;border:1px solid var(--border2);cursor:pointer;transition:var(--transition);}
+.btn-cancel:hover{border-color:var(--border3);color:var(--text);}
+.msg{font-size:12.5px;font-weight:500;margin-top:.5rem;min-height:18px;}
+.msg.ok{color:var(--green);}
+.msg.err{color:var(--red);}
+
+/* Avatar */
+.avatar-row{display:flex;align-items:center;gap:1.25rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.big-avatar{width:60px;height:60px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;}
+.avatar-info .name{font-size:15px;font-weight:700;}
+.avatar-info .email{font-size:13px;color:var(--text2);margin-top:2px;}
+.avatar-info .plan-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;margin-top:6px;}
+.tag-free{background:var(--bg3);border:1px solid var(--border2);color:var(--text3);}
+.tag-paid{background:var(--accent-bg);border:1px solid rgba(124,109,250,.25);color:var(--accent3);}
+
+/* Danger zone */
+.danger-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.75rem;}
+.danger-item:last-child{border-bottom:none;padding-bottom:0;}
+.danger-info .danger-title{font-size:13.5px;font-weight:700;}
+.danger-info .danger-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.btn-danger{padding:8px 18px;border-radius:var(--r8);background:transparent;color:var(--red);font-size:12.5px;font-weight:600;border:1px solid rgba(255,107,107,.25);cursor:pointer;transition:var(--transition);}
+.btn-danger:hover{background:var(--red-bg);border-color:rgba(255,107,107,.45);}
+.btn-logout{padding:8px 18px;border-radius:var(--r8);background:transparent;color:var(--text2);font-size:12.5px;font-weight:600;border:1px solid var(--border2);cursor:pointer;transition:var(--transition);}
+.btn-logout:hover{border-color:var(--border3);color:var(--text);}
+
+/* Notification row */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0;}
+.toggle-info .toggle-title{font-size:13.5px;font-weight:600;}
+.toggle-info .toggle-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.toggle{position:relative;display:inline-block;width:38px;height:22px;}
+.toggle input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--bg3);border:1px solid var(--border2);transition:.2s;border-radius:22px;}
+.slider:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:var(--text3);transition:.2s;border-radius:50%;}
+input:checked+.slider{background:var(--accent);border-color:var(--accent);}
+input:checked+.slider:before{transform:translateX(16px);background:#fff;}
+
+@media(max-width:600px){
+  .page{padding:1.5rem 1rem;}
+  nav{padding:0 1rem;}
+  .nav-links{display:none;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">Type<span class="gr">FromPDF</span></a>
+  <div class="nav-links">
+    <a href="/app" class="nav-link">Workspace</a>
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <a href="/settings" class="nav-link active">Settings</a>
+  </div>
+  <a href="/app" class="btn-back">← Back to App</a>
+</nav>
+
+<div class="page">
+  <div class="page-title">Account Settings</div>
+
+  <!-- Profile -->
+  <div class="settings-section">
+    <div class="section-header">
+      <div class="section-icon">👤</div>
+      <div>
+        <div class="section-title">Profile</div>
+        <div class="section-sub">Your name and email address</div>
+      </div>
+    </div>
+    <div class="avatar-row">
+      <div class="big-avatar" id="big-avatar">?</div>
+      <div class="avatar-info">
+        <div class="name" id="avatar-name">Loading…</div>
+        <div class="email" id="avatar-email">—</div>
+        <div class="plan-tag" id="avatar-plan-tag">—</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input class="form-input" type="text" id="prof-name" placeholder="Your full name"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" type="email" id="prof-email" disabled placeholder="your@email.com"/>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:.25rem;">Email changes aren't supported yet. Contact support to update your email.</p>
+    <div class="form-actions">
+      <button class="btn-save" onclick="saveProfile()" id="prof-btn">Save Changes</button>
+    </div>
+    <div class="msg" id="prof-msg"></div>
+  </div>
+
+  <!-- Password -->
+  <div class="settings-section">
+    <div class="section-header">
+      <div class="section-icon">🔒</div>
+      <div>
+        <div class="section-title">Change Password</div>
+        <div class="section-sub">Update your login password</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Current Password</label>
+      <div class="pw-wrap">
+        <input class="form-input" type="password" id="pw-current" placeholder="Enter your current password" oninput="clearPwMsg()"/>
+        <button class="pw-eye" type="button" onclick="togglePw('pw-current',this)">👁</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">New Password</label>
+      <div class="pw-wrap">
+        <input class="form-input" type="password" id="pw-new" placeholder="Min. 6 characters" oninput="clearPwMsg()"/>
+        <button class="pw-eye" type="button" onclick="togglePw('pw-new',this)">👁</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirm New Password</label>
+      <div class="pw-wrap">
+        <input class="form-input" type="password" id="pw-confirm" placeholder="Same password again" oninput="clearPwMsg()"/>
+        <button class="pw-eye" type="button" onclick="togglePw('pw-confirm',this)">👁</button>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-save" onclick="changePassword()" id="pw-btn">Update Password</button>
+    </div>
+    <div class="msg" id="pw-msg"></div>
+  </div>
+
+  <!-- Preferences -->
+  <div class="settings-section">
+    <div class="section-header">
+      <div class="section-icon">🎛️</div>
+      <div>
+        <div class="section-title">Preferences</div>
+        <div class="section-sub">App behaviour and notifications</div>
+      </div>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="toggle-title">Sound effects</div>
+        <div class="toggle-sub">Play a sound on typing errors</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="pref-sound" onchange="savePref('sound',this.checked)"/><span class="slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="toggle-title">Auto-scroll</div>
+        <div class="toggle-sub">Scroll the page as you type</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="pref-scroll" checked onchange="savePref('scroll',this.checked)"/><span class="slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="toggle-title">Show results automatically</div>
+        <div class="toggle-sub">Display your score when you finish</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="pref-results" checked onchange="savePref('results',this.checked)"/><span class="slider"></span></label>
+    </div>
+  </div>
+
+  <!-- Danger zone -->
+  <div class="settings-section danger-zone">
+    <div class="section-header">
+      <div class="section-icon">⚠️</div>
+      <div>
+        <div class="section-title" style="color:var(--red)">Danger Zone</div>
+        <div class="section-sub">These actions are permanent</div>
+      </div>
+    </div>
+    <div class="danger-item">
+      <div class="danger-info">
+        <div class="danger-title">Log Out</div>
+        <div class="danger-sub">You can log back in anytime</div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Log Out</button>
+    </div>
+    <div class="danger-item">
+      <div class="danger-info">
+        <div class="danger-title">Clear Typing History</div>
+        <div class="danger-sub">Permanently delete all your session history</div>
+      </div>
+      <button class="btn-danger" onclick="clearHistory()">Clear History</button>
+    </div>
+    <div class="danger-item">
+      <div class="danger-info">
+        <div class="danger-title">Delete Account</div>
+        <div class="danger-sub">Permanently delete your account and all data</div>
+      </div>
+      <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+async function hashPass(p){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function $(id){return document.getElementById(id);}
+function togglePw(id,btn){const i=$(id);const show=i.type==='password';i.type=show?'text':'password';btn.textContent=show?'🙈':'👁';}
+function clearPwMsg(){const m=$('pw-msg');m.textContent='';m.className='msg';}
+
+const Auth={
+  me:()=>JSON.parse(localStorage.getItem('tfp_c')||'null'),
+  all:()=>JSON.parse(localStorage.getItem('tfp_u')||'[]'),
+  logout(){localStorage.removeItem('tfp_c');window.location.replace('/');}
+};
+
+function initSettings(){
+  const u=Auth.me();
+  if(!u){window.location.replace('/');return;}
+  $('big-avatar').textContent=u.name[0].toUpperCase();
+  $('avatar-name').textContent=u.name;
+  $('avatar-email').textContent=u.email;
+  $('avatar-plan-tag').textContent=u.plan==='paid'?'✦ Premium':'Free Plan';
+  $('avatar-plan-tag').className='plan-tag '+(u.plan==='paid'?'tag-paid':'tag-free');
+  $('prof-name').value=u.name;
+  $('prof-email').value=u.email;
+  // Preferences
+  const prefs=JSON.parse(localStorage.getItem('tfp_prefs')||'{}');
+  $('pref-sound').checked=prefs.sound||false;
+  $('pref-scroll').checked=prefs.scroll!==false;
+  $('pref-results').checked=prefs.results!==false;
+}
+
+function saveProfile(){
+  const name=$('prof-name').value.trim();
+  const btn=$('prof-btn'),msg=$('prof-msg');
+  if(!name){msg.textContent='Name cannot be empty.';msg.className='msg err';return;}
+  btn.disabled=true;btn.textContent='Saving…';
+  const u=Auth.me();
+  const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
+  if(i>=0){
+    us[i].name=name;
+    localStorage.setItem('tfp_u',JSON.stringify(us));
+    u.name=name;
+    localStorage.setItem('tfp_c',JSON.stringify(us[i]));
+  }
+  $('big-avatar').textContent=name[0].toUpperCase();
+  $('avatar-name').textContent=name;
+  msg.textContent='✓ Profile updated!';msg.className='msg ok';
+  btn.disabled=false;btn.textContent='Save Changes';
+  setTimeout(()=>{msg.textContent='';msg.className='msg';},3000);
+}
+
+async function changePassword(){
+  const curr=$('pw-current').value;
+  const nw=$('pw-new').value;
+  const conf=$('pw-confirm').value;
+  const btn=$('pw-btn'),msg=$('pw-msg');
+  if(!curr){msg.textContent='Please enter your current password.';msg.className='msg err';return;}
+  if(nw.length<6){msg.textContent='New password must be at least 6 characters.';msg.className='msg err';return;}
+  if(nw!==conf){msg.textContent='New passwords do not match.';msg.className='msg err';return;}
+  btn.disabled=true;btn.textContent='Updating…';
+  const hCurr=await hashPass(curr);
+  const u=Auth.me();
+  const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
+  if(i<0||(us[i].pass!==hCurr&&us[i].pass!==curr)){
+    msg.textContent='Current password is incorrect.';msg.className='msg err';
+    btn.disabled=false;btn.textContent='Update Password';return;
+  }
+  const hNew=await hashPass(nw);
+  us[i].pass=hNew;
+  localStorage.setItem('tfp_u',JSON.stringify(us));
+  localStorage.setItem('tfp_c',JSON.stringify(us[i]));
+  $('pw-current').value='';$('pw-new').value='';$('pw-confirm').value='';
+  msg.textContent='✓ Password updated!';msg.className='msg ok';
+  btn.disabled=false;btn.textContent='Update Password';
+  setTimeout(()=>{msg.textContent='';msg.className='msg';},3000);
+}
+
+function savePref(key,val){
+  const prefs=JSON.parse(localStorage.getItem('tfp_prefs')||'{}');
+  prefs[key]=val;
+  localStorage.setItem('tfp_prefs',JSON.stringify(prefs));
+}
+
+function doLogout(){if(confirm('Log out of TypeFromPDF?'))Auth.logout();}
+
+function clearHistory(){
+  if(!confirm('Clear all your typing history? This cannot be undone.'))return;
+  localStorage.removeItem('tfp_history');
+  localStorage.removeItem('tfp_recent');
+  alert('History cleared.');
+}
+
+function deleteAccount(){
+  if(!confirm('Delete your account permanently? ALL your data will be lost and cannot be recovered.'))return;
+  if(!confirm('Are you absolutely sure? This is irreversible.'))return;
+  const u=Auth.me();
+  let us=Auth.all();
+  us=us.filter(x=>x.email!==u.email);
+  localStorage.setItem('tfp_u',JSON.stringify(us));
+  Auth.logout();
+}
+
+initSettings();
+</script>
+</body>
+</html>

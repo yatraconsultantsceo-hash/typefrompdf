@@ -5,8 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Pricing — TypeFromPDF</title>
 <meta name="description" content="Simple, transparent pricing. Start free, no credit card required. Upgrade when you need unlimited PDFs and all 18 coding languages."/>
+<link rel="canonical" href="https://typefrompdf.com/pricing.html"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://typefrompdf.com/pricing.html"/>
+<meta property="og:title" content="Pricing — TypeFromPDF"/>
+<meta property="og:description" content="Start free. Upgrade for unlimited PDF uploads and all 18 coding languages. No hidden fees."/>
+<meta property="og:image" content="https://typefrompdf.com/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Pricing — TypeFromPDF"/>
+<meta name="twitter:description" content="Start free. Upgrade for unlimited PDF uploads and all 18 coding languages."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>window.addEventListener('load',()=>{if(typeof Paddle!=='undefined')Paddle.Setup({token:'live_e012be157ab7779131b2afb0f6e'});});</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -197,7 +208,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       <div class="plan-billed">Billed monthly · Cancel anytime</div>
       <div class="plan-save">&nbsp;</div>
       <div class="plan-desc">Full access every month, with the flexibility to cancel at any time.</div>
-      <button class="plan-cta outline" onclick="openEarlyPricing(this)">Get Monthly →</button>
+      <button class="plan-cta outline" onclick="openPaddleCheckout('monthly')">Get Monthly →</button>
       <ul class="plan-features">
         <li><span class="check">✓</span> Unlimited PDF uploads</li>
         <li><span class="check">✓</span> All 18 coding languages</li>
@@ -218,7 +229,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       <div class="plan-billed">Billed as $180/year</div>
       <div class="plan-save">Only $15/mo — you save $24 per year</div>
       <div class="plan-desc">Best value. Everything in Monthly, at $15/month when you pay annually.</div>
-      <button class="plan-cta filled" onclick="openEarlyPricing(this)">Get Yearly — Best Value</button>
+      <button class="plan-cta filled" onclick="openPaddleCheckout('yearly')">Get Yearly — Best Value</button>
       <ul class="plan-features">
         <li><span class="check">✓</span> Unlimited PDF uploads</li>
         <li><span class="check">✓</span> All 18 coding languages</li>
@@ -334,31 +345,33 @@ function toggleFaq(btn){
   if(!isOpen){item.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}
 }
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
-function openEarlyPricing(btn){
-  const plan=btn.closest('.plan').querySelector('.plan-tier').textContent.trim()+' Plan';
-  openEarly(plan);
-}
-function openEarly(plan){
-  document.getElementById('early-plan-label').textContent='✦ '+plan;
-  document.getElementById('early-body').style.display='block';
-  document.getElementById('early-success').style.display='none';
-  document.getElementById('early-email').value='';
-  document.getElementById('early-msg').textContent='';
-  document.getElementById('early-modal').style.display='flex';
-  setTimeout(()=>document.getElementById('early-email').focus(),80);
-}
-function closeEarly(){document.getElementById('early-modal').style.display='none';}
-function submitEarly(){
-  const email=document.getElementById('early-email').value.trim();
-  const msg=document.getElementById('early-msg');
-  if(!validEmail(email)){msg.textContent='Please enter a valid email.';msg.className='auth-msg err';return;}
-  const waitlist=JSON.parse(localStorage.getItem('tfp_waitlist')||'[]');
-  if(!waitlist.includes(email))waitlist.push(email);
-  localStorage.setItem('tfp_waitlist',JSON.stringify(waitlist));
-  document.getElementById('early-email-confirm').textContent=email;
-  document.getElementById('early-body').style.display='none';
-  document.getElementById('early-success').style.display='block';
-  setTimeout(()=>closeEarly(),4000);
+
+function openPaddleCheckout(plan){
+  const u=JSON.parse(localStorage.getItem('tfp_c')||'null');
+  if(!u){
+    // Not logged in — redirect to home and open signup modal
+    window.location.href='/?openAuth=su';
+    return;
+  }
+  const priceId=plan==='yearly'?'pri_01kxnqmy747shff8effyxaqnch':'pri_01kxnqh2xazqah6k33wecpq905';
+  if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again.');return;}
+  Paddle.Checkout.open({
+    items:[{priceId,quantity:1}],
+    customer:{email:u.email},
+    settings:{
+      successUrl:'https://typefrompdf.com/success?plan='+(plan==='yearly'?'Yearly+Plan+($180/yr)':'Monthly+Plan+($17/mo)'),
+      cancelUrl:'https://typefrompdf.com/cancel',
+      theme:'dark',
+      displayMode:'overlay',
+    },
+    eventCallback(data){
+      if(data.name==='checkout.completed'){
+        const us=JSON.parse(localStorage.getItem('tfp_u')||'[]');
+        const i=us.findIndex(x=>x.email===u.email);
+        if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
+      }
+    }
+  });
 }
 </script>
 </body>

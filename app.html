@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TypeFromPDF — Workspace</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>window.addEventListener('load',()=>{if(typeof Paddle!=='undefined')Paddle.Setup({token:'live_e012be157ab7779131b2afb0f6e'});});</script>
+<script>
+function loadPdfJs(cb){
+  if(window.pdfjsLib){cb();return;}
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  s.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';cb();};
+  document.head.appendChild(s);
+}
+// Auth guard — redirect to home if not logged in
+(function(){
+  const u=JSON.parse(localStorage.getItem('tfp_c')||'null');
+  if(!u){window.location.replace('/');}
+})();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:#03030d;}
+:root{
+  --bg:#03030d;--bg2:#08081c;--bg3:#0c0c22;--bg4:#111128;--bg5:#14142e;
+  --border:#1a1a3a;--border2:#252550;--border3:#353568;
+  --text:#f0f0ff;--text2:#7070a8;--text3:#36365a;
+  --accent:#7c6dfa;--accent2:#9d91fb;--accent3:#bfb8ff;
+  --accent-bg:rgba(124,109,250,.08);--accent-glow:rgba(124,109,250,.28);
+  --green:#00d2a0;--green-bg:rgba(0,210,160,.08);--green-border:rgba(0,210,160,.2);
+  --red:#ff6b6b;--red-bg:rgba(255,107,107,.1);
+  --gold:#ffd93d;--gold-bg:rgba(255,217,61,.08);
+  --sidebar-w:260px;
+  --r6:6px;--r8:8px;--r12:12px;--r16:16px;--r20:20px;--rpill:100px;
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+  --grad:linear-gradient(135deg,#6c5ce7 0%,#7c6dfa 50%,#a29bfe 100%);
+  --transition:all .18s cubic-bezier(.4,0,.2,1);
+}
+body{font-family:'Inter',sans-serif;color:var(--text);line-height:1.6;overflow:hidden;}
+a{color:inherit;text-decoration:none;}
+.hidden{display:none!important;}
+button{font-family:'Inter',sans-serif;cursor:pointer;}
+input,textarea{font-family:'Inter',sans-serif;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* ── LAYOUT ── */
+.app-layout{display:flex;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;height:100vh;overflow:hidden;
+  transition:width .25s ease;position:relative;z-index:100;
+}
+.sidebar-header{padding:18px 16px 14px;border-bottom:1px solid var(--border);}
+.sidebar-logo{font-size:15px;font-weight:900;letter-spacing:-.6px;display:flex;align-items:center;gap:4px;margin-bottom:14px;}
+.sidebar-logo .gr{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sidebar-logo a{display:flex;align-items:center;gap:4px;}
+.new-session-btn{
+  width:100%;padding:9px 14px;border-radius:var(--r8);
+  background:var(--accent-bg);border:1px solid rgba(124,109,250,.25);
+  color:var(--accent3);font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:8px;transition:var(--transition);
+}
+.new-session-btn:hover{background:rgba(124,109,250,.14);border-color:rgba(124,109,250,.4);}
+
+/* Mode nav */
+.sidebar-nav{padding:12px 10px;flex:1;overflow-y:auto;}
+.nav-section-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:0 6px;margin:10px 0 6px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;
+  border-radius:var(--r8);font-size:13.5px;font-weight:600;color:var(--text2);
+  cursor:pointer;transition:var(--transition);border:none;background:none;width:100%;text-align:left;
+}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--accent-bg);color:var(--accent3);border:1px solid rgba(124,109,250,.2);}
+.nav-item-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:var(--rpill);margin-left:auto;}
+.badge-pro{background:var(--gold-bg);color:var(--gold);border:1px solid rgba(255,217,61,.2);}
+
+/* Recent sessions */
+.recent-header{display:flex;align-items:center;justify-content:space-between;padding:0 6px;margin:16px 0 6px;}
+.recent-header .nav-section-label{margin:0;}
+.clear-recent{font-size:10px;color:var(--text3);cursor:pointer;background:none;border:none;font-family:inherit;transition:var(--transition);}
+.clear-recent:hover{color:var(--text2);}
+.recent-list{display:flex;flex-direction:column;gap:2px;}
+.recent-item{
+  display:flex;align-items:center;gap:8px;padding:7px 10px;
+  border-radius:var(--r8);font-size:12.5px;color:var(--text3);
+  cursor:pointer;transition:var(--transition);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.recent-item:hover{background:var(--bg3);color:var(--text2);}
+.recent-item-icon{font-size:13px;flex-shrink:0;}
+.recent-item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:12px;}
+.recent-empty{font-size:12px;color:var(--text3);padding:6px 10px;font-style:italic;}
+
+/* Sidebar bottom */
+.sidebar-bottom{border-top:1px solid var(--border);padding:12px 10px;}
+.upgrade-card{
+  background:linear-gradient(135deg,rgba(124,109,250,.1),rgba(162,155,254,.06));
+  border:1px solid rgba(124,109,250,.2);border-radius:var(--r12);
+  padding:14px;margin-bottom:10px;
+}
+.upgrade-card-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.upgrade-card-sub{font-size:11.5px;color:var(--text2);margin-bottom:10px;line-height:1.5;}
+.upgrade-card-btn{
+  width:100%;padding:8px;border-radius:var(--r8);background:var(--grad);
+  color:#fff;font-size:12.5px;font-weight:700;border:none;
+  transition:var(--transition);box-shadow:0 2px 12px var(--accent-glow);
+}
+.upgrade-card-btn:hover{opacity:.88;}
+.user-row{
+  display:flex;align-items:center;gap:10px;padding:8px 6px;
+  border-radius:var(--r8);cursor:pointer;transition:var(--transition);
+  position:relative;
+}
+.user-row:hover{background:var(--bg3);}
+.user-avatar{
+  width:34px;height:34px;border-radius:50%;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.user-info{flex:1;overflow:hidden;}
+.user-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-plan{font-size:11px;color:var(--text3);}
+.user-menu-btn{background:none;border:none;color:var(--text3);font-size:14px;padding:4px;transition:var(--transition);}
+.user-menu-btn:hover{color:var(--text);}
+.user-dropdown{
+  position:absolute;bottom:calc(100% + 8px);left:0;right:0;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r12);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.user-dropdown a,.user-dropdown button{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  font-size:13px;color:var(--text2);width:100%;border:none;background:none;
+  font-family:inherit;cursor:pointer;transition:var(--transition);text-align:left;
+}
+.user-dropdown a:hover,.user-dropdown button:hover{background:var(--bg4);color:var(--text);}
+.user-dropdown .logout-btn{color:var(--red);}
+.user-dropdown .logout-btn:hover{background:var(--red-bg);}
+
+/* ── MAIN AREA ── */
+.app-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+
+/* Top bar */
+.app-topbar{
+  height:54px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;background:var(--bg2);border-bottom:1px solid var(--border);
+}
+.topbar-mode{font-size:14px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:8px;}
+.topbar-mode-icon{font-size:18px;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.topbar-btn{
+  display:flex;align-items:center;gap:6px;padding:6px 14px;
+  border-radius:var(--r8);font-size:12.5px;font-weight:600;
+  border:1px solid var(--border2);background:transparent;color:var(--text2);
+  transition:var(--transition);
+}
+.topbar-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3);}
+.topbar-btn.primary{background:var(--grad);color:#fff;border:none;box-shadow:0 2px 12px var(--accent-glow);}
+.topbar-btn.primary:hover{opacity:.88;}
+
+/* Live stats row (shown while typing) */
+.live-stats{
+  display:flex;align-items:center;gap:1.5rem;padding:10px 24px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  transition:var(--transition);
+}
+.ls-stat{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.ls-val{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1.2;}
+.ls-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
+.progress-track{flex:1;height:4px;background:var(--border);border-radius:2px;margin:0 8px;}
+.progress-fill{height:100%;background:var(--grad);width:0;transition:width .35s ease;border-radius:2px;}
+.ls-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.page-btn{background:transparent;border:1px solid var(--border2);color:var(--text2);padding:4px 12px;border-radius:var(--r8);font-size:12px;font-weight:600;transition:var(--transition);}
+.page-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent3);}
+.page-btn:disabled{opacity:.3;cursor:default;}
+.page-info{font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap;}
+.reset-btn{background:transparent;border:1px solid var(--border2);color:var(--text3);padding:4px 12px;border-radius:var(--r8);font-size:12px;font-weight:600;transition:var(--transition);}
+.reset-btn:hover{border-color:var(--border3);color:var(--text2);}
+
+/* Content scroll area */
+.app-content{flex:1;overflow-y:auto;padding:32px 40px;}
+
+/* Upload zone */
+.upload-zone{
+  border:2px dashed var(--border2);border-radius:var(--r20);padding:56px 2rem;
+  text-align:center;cursor:pointer;transition:var(--transition);
+  background:var(--bg2);position:relative;overflow:hidden;max-width:640px;margin:0 auto;
+}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:var(--bg3);}
+.upload-zone input{display:none;}
+.u-icon{font-size:52px;margin-bottom:1.1rem;display:block;}
+.upload-zone h3{font-size:18px;font-weight:700;margin-bottom:.5rem;}
+.upload-zone p{font-size:14px;color:var(--text2);}
+.upload-zone .u-note{font-size:12px;color:var(--text3);margin-top:.5rem;}
+.try-sample{
+  display:inline-flex;align-items:center;gap:6px;margin-top:1.25rem;
+  padding:9px 20px;border-radius:var(--rpill);
+  background:var(--accent-bg);border:1px solid rgba(124,109,250,.25);
+  color:var(--accent3);font-size:13px;font-weight:600;transition:var(--transition);
+}
+.try-sample:hover{background:rgba(124,109,250,.14);border-color:rgba(124,109,250,.4);}
+#status-msg{font-size:13px;color:var(--text2);text-align:center;padding:.5rem;min-height:1.4rem;font-weight:500;max-width:640px;margin:0 auto;}
+
+/* Code mode */
+.code-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.code-section-title{font-size:13px;font-weight:700;color:var(--text2);}
+.code-actions{display:flex;gap:8px;}
+.code-btn{
+  display:flex;align-items:center;gap:6px;padding:7px 14px;
+  border-radius:var(--r8);font-size:12.5px;font-weight:600;
+  border:1px solid var(--border2);background:transparent;color:var(--text2);transition:var(--transition);
+}
+.code-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3);}
+.prog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px;margin-bottom:20px;}
+.prog-btn{
+  padding:11px 12px;border-radius:var(--r8);border:1px solid var(--border2);
+  background:var(--bg2);color:var(--text2);font-size:12.5px;font-weight:600;
+  text-align:left;transition:var(--transition);position:relative;
+}
+.prog-btn:hover:not(.locked){border-color:var(--accent);color:var(--text);background:var(--accent-bg);}
+.prog-btn.active{border-color:var(--accent);color:var(--accent3);background:var(--accent-bg);}
+.prog-btn.locked{opacity:.45;cursor:not-allowed;}
+.prog-name{font-size:13px;font-weight:700;margin-bottom:3px;}
+.prog-badge{font-size:9px;font-weight:800;letter-spacing:.5px;padding:2px 6px;border-radius:4px;}
+.badge-free{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-pro{background:var(--gold-bg);color:var(--gold);border:1px solid rgba(255,217,61,.2);}
+.paste-wrap{margin-top:4px;}
+.paste-lbl{font-size:12px;font-weight:600;color:var(--text3);margin-bottom:.5rem;}
+.paste-area{
+  width:100%;min-height:110px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r8);color:var(--text);font-family:'JetBrains Mono',monospace;
+  font-size:13px;padding:12px;resize:vertical;outline:none;transition:var(--transition);
+}
+.paste-area:focus{border-color:var(--accent);}
+.paste-load{
+  margin-top:.5rem;padding:9px 22px;border-radius:var(--r8);
+  background:var(--grad);color:#fff;font-size:13px;font-weight:700;border:none;
+  transition:var(--transition);box-shadow:0 2px 12px var(--accent-glow);
+}
+.paste-load:hover{opacity:.88;}
+
+/* Typing area */
+.typing-card{border-radius:var(--r16);overflow:hidden;border:1px solid var(--border2);background:var(--bg3);transition:var(--transition);}
+.typing-card:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,250,.1);}
+.typing-body{position:relative;background:var(--bg3);}
+.ghost-layer,.char-layer{
+  position:absolute;top:0;left:0;right:0;
+  font-family:'JetBrains Mono',monospace;font-size:15px;line-height:2.1;
+  padding:1.5rem 2rem;white-space:pre-wrap;word-break:break-word;pointer-events:none;
+}
+.ghost-layer{color:rgba(240,240,255,.07);}
+.char-layer{color:transparent;}
+.c-ok{color:var(--text);}
+.c-err{color:var(--red);background:var(--red-bg);border-radius:3px;}
+#typing-input{
+  width:100%;min-height:340px;background:transparent;border:none;outline:none;resize:none;
+  font-family:'JetBrains Mono',monospace;font-size:15px;line-height:2.1;
+  padding:1.5rem 2rem;color:transparent;caret-color:var(--accent);
+  white-space:pre-wrap;word-break:break-word;
+}
+.typing-hint{font-size:11.5px;color:var(--text3);text-align:center;margin-top:.6rem;font-weight:500;padding-bottom:.5rem;}
+.hint-err{color:var(--red);}
+
+/* Result card (shown on completion) */
+.result-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r20);
+  padding:2.5rem 2rem;text-align:center;max-width:640px;margin:0 auto;
+}
+.result-icon{font-size:52px;margin-bottom:1rem;}
+.result-title{font-size:22px;font-weight:800;margin-bottom:.4rem;}
+.result-sub{font-size:14px;color:var(--text2);margin-bottom:2rem;}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+.rs-stat{background:var(--bg3);border-radius:var(--r12);padding:1rem;}
+.rs-val{font-size:2rem;font-weight:900;letter-spacing:-1.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:.2rem;}
+.rs-lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
+.result-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-grad{padding:11px 26px;border-radius:var(--r12);background:var(--grad);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:var(--transition);box-shadow:0 4px 20px var(--accent-glow);}
+.btn-grad:hover{opacity:.88;transform:translateY(-1px);}
+.btn-outline{padding:11px 26px;border-radius:var(--r12);background:transparent;color:var(--text);font-size:14px;font-weight:600;border:1px solid var(--border2);cursor:pointer;transition:var(--transition);}
+.btn-outline:hover{border-color:var(--border3);background:var(--bg3);}
+
+/* Upgrade modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:900;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:2rem;width:100%;max-width:420px;position:relative;box-shadow:0 16px 64px rgba(0,0,0,.6);animation:slideUp .25s cubic-bezier(.4,0,.2,1);}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-x{position:absolute;top:1rem;right:1rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r8);color:var(--text3);font-size:14px;padding:6px 9px;line-height:1;transition:var(--transition);cursor:pointer;}
+.modal-x:hover{color:var(--text);border-color:var(--border2);}
+.modal h2{font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:.3rem;}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;}
+.upgrade-icon{font-size:36px;margin-bottom:.75rem;}
+.upgrade-perks{list-style:none;margin:1.25rem 0 1.5rem;}
+.upgrade-perks li{font-size:13.5px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;line-height:1.5;}
+.upgrade-perks li:last-child{border-bottom:none;}
+.upgrade-perks li::before{content:'✦';color:var(--accent2);font-size:10px;flex-shrink:0;}
+.upgrade-btns{display:flex;flex-direction:column;gap:8px;}
+.form-btn{width:100%;padding:13px;border-radius:var(--r12);background:var(--grad);color:#fff;font-size:14.5px;font-weight:700;border:none;transition:var(--transition);box-shadow:0 4px 20px var(--accent-glow);cursor:pointer;}
+.form-btn:hover{opacity:.88;transform:translateY(-1px);}
+.form-btn.outline-btn{background:transparent;border:1px solid var(--border2);color:var(--text);box-shadow:none;}
+.form-btn.outline-btn:hover{background:var(--bg3);border-color:var(--border3);}
+
+/* Sidebar toggle (mobile) */
+.sidebar-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r8);padding:8px 10px;color:var(--text);font-size:18px;cursor:pointer;}
+
+@media(max-width:900px){
+  .sidebar{position:fixed;left:-var(--sidebar-w);width:var(--sidebar-w);z-index:150;transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(var(--sidebar-w));}
+  .sidebar-toggle{display:block;}
+  .app-content{padding:20px 16px;}
+  .live-stats{padding:8px 16px;gap:1rem;}
+  .app-topbar{padding:0 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR TOGGLE (mobile) -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle">☰</button>
+
+<!-- LAYOUT -->
+<div class="app-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <a href="/">Type<span class="gr">FromPDF</span></a>
+      </div>
+      <button class="new-session-btn" onclick="newSession()">
+        <span style="font-size:16px">＋</span> New Session
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Modes</div>
+      <button class="nav-item active" id="nav-pdf" onclick="switchMode('pdf')">
+        <span class="nav-item-icon">📄</span> PDF Typing
+      </button>
+      <button class="nav-item" id="nav-code" onclick="switchMode('code')">
+        <span class="nav-item-icon">💻</span> Code Typing
+        <span class="nav-badge badge-pro">PRO</span>
+      </button>
+
+      <div class="recent-header">
+        <div class="nav-section-label">Recent</div>
+        <button class="clear-recent" onclick="clearRecent()">Clear</button>
+      </div>
+      <div class="recent-list" id="recent-list">
+        <div class="recent-empty" id="recent-empty">No sessions yet</div>
+      </div>
+
+      <div class="nav-section-label" style="margin-top:16px;">Account</div>
+      <a class="nav-item" href="/dashboard">
+        <span class="nav-item-icon">📊</span> Dashboard
+      </a>
+      <a class="nav-item" href="/settings">
+        <span class="nav-item-icon">⚙️</span> Settings
+      </a>
+      <a class="nav-item" href="/pricing.html">
+        <span class="nav-item-icon">✨</span> Upgrade
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <!-- Upgrade card (hidden for paid users) -->
+      <div class="upgrade-card" id="upgrade-card">
+        <div class="upgrade-card-title">✦ Go Unlimited</div>
+        <div class="upgrade-card-sub">Unlock all 18 languages and unlimited PDF uploads.</div>
+        <button class="upgrade-card-btn" onclick="openUpgrade()">Upgrade — from $15/mo</button>
+      </div>
+      <!-- User row -->
+      <div class="user-row" id="user-row" onclick="toggleUserMenu()">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name">Loading…</div>
+          <div class="user-plan" id="user-plan">Free plan</div>
+        </div>
+        <button class="user-menu-btn">⋯</button>
+        <div class="user-dropdown hidden" id="user-dropdown">
+          <a href="/dashboard">📊 Dashboard</a>
+          <a href="/settings">⚙️ Account Settings</a>
+          <a href="/pricing.html">✨ Upgrade Plan</a>
+          <hr style="border:none;border-top:1px solid var(--border);margin:4px 0;"/>
+          <button class="logout-btn" onclick="doLogout()">🚪 Log Out</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="app-main">
+
+    <!-- Top bar -->
+    <div class="app-topbar">
+      <div class="topbar-mode" id="topbar-mode">
+        <span class="topbar-mode-icon">📄</span>
+        <span id="topbar-mode-text">PDF Typing</span>
+      </div>
+      <div class="topbar-actions" id="topbar-actions">
+        <button class="topbar-btn" onclick="newSession()">↺ New Session</button>
+        <button class="topbar-btn primary hidden" id="btn-upgrade-top" onclick="openUpgrade()">✦ Upgrade</button>
+      </div>
+    </div>
+
+    <!-- Live stats bar (shown while typing) -->
+    <div class="live-stats hidden" id="live-stats">
+      <div class="ls-stat"><div class="ls-val" id="s-wpm">—</div><div class="ls-lbl">WPM</div></div>
+      <div class="ls-stat"><div class="ls-val" id="s-acc">—</div><div class="ls-lbl">Accuracy</div></div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+      <div class="ls-stat"><div class="ls-val" id="s-prog">0%</div><div class="ls-lbl">Progress</div></div>
+      <div class="ls-stat"><div class="ls-val" id="s-time">0s</div><div class="ls-lbl">Time</div></div>
+      <div class="ls-right">
+        <div class="page-nav hidden" id="page-nav">
+          <button class="page-btn" id="btn-prev" onclick="changePage(-1)">← Prev</button>
+          <span class="page-info" id="page-info"></span>
+          <button class="page-btn" id="btn-next" onclick="changePage(1)">Next →</button>
+        </div>
+        <button class="reset-btn" onclick="resetTyping()">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="app-content" id="app-content">
+
+      <!-- PDF MODE -->
+      <div id="pdf-mode">
+        <div class="upload-zone" id="drop-zone" onclick="document.getElementById('pdf-input').click()">
+          <input type="file" id="pdf-input" accept=".pdf"/>
+          <span class="u-icon">📂</span>
+          <h3>Drop your PDF here</h3>
+          <p>or click to browse your files</p>
+          <p class="u-note">100% private — your PDF never leaves your browser</p>
+          <span class="try-sample" onclick="event.stopPropagation();loadSample()">✦ Try a sample text</span>
+        </div>
+        <div id="status-msg"></div>
+      </div>
+
+      <!-- CODE MODE -->
+      <div id="code-mode" class="hidden">
+        <div class="code-section-header">
+          <div class="code-section-title">Choose a Language</div>
+          <div class="code-actions">
+            <button class="code-btn" onclick="document.getElementById('code-file-inp').click()">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              Upload File
+            </button>
+            <input type="file" id="code-file-inp" accept=".py,.js,.ts,.java,.c,.cpp,.cs,.go,.rs,.php,.rb,.swift,.kt,.sql,.dart,.r,.html,.css" style="display:none"/>
+            <button class="code-btn" onclick="togglePaste()">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              Paste Code
+            </button>
+          </div>
+        </div>
+        <div class="prog-grid" id="prog-grid"></div>
+        <div id="paste-panel" class="paste-wrap hidden">
+          <div class="paste-lbl">Paste your code below, then click Load:</div>
+          <textarea class="paste-area" id="paste-inp" placeholder="// Paste any code here…"></textarea>
+          <button class="paste-load" onclick="loadPasted()">Load This Code →</button>
+        </div>
+      </div>
+
+      <!-- TYPING SECTION -->
+      <div id="typing-section" class="hidden" style="margin-top:20px;">
+        <div class="typing-card">
+          <div class="typing-body">
+            <div class="ghost-layer" id="ghost-layer"></div>
+            <div class="char-layer" id="char-layer"></div>
+            <textarea id="typing-input" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" placeholder="Start typing to begin…"></textarea>
+          </div>
+        </div>
+        <p class="typing-hint"><span class="hint-err">Red</span> = wrong character &nbsp;·&nbsp; Faded = not yet typed &nbsp;·&nbsp; Keep going, don't fix errors — just keep the rhythm!</p>
+      </div>
+
+      <!-- RESULT CARD (shown on completion) -->
+      <div id="result-card" class="result-card hidden">
+        <div class="result-icon">🎉</div>
+        <div class="result-title">Session Complete!</div>
+        <div class="result-sub" id="result-sub">Great work. Here's how you did:</div>
+        <div class="result-stats">
+          <div class="rs-stat"><div class="rs-val" id="r-wpm">—</div><div class="rs-lbl">WPM</div></div>
+          <div class="rs-stat"><div class="rs-val" id="r-acc">—</div><div class="rs-lbl">Accuracy</div></div>
+          <div class="rs-stat"><div class="rs-val" id="r-time">—</div><div class="rs-lbl">Time</div></div>
+        </div>
+        <div class="result-actions">
+          <button class="btn-grad" onclick="retrySession()">↺ Try Again</button>
+          <button class="btn-outline" onclick="newSession()">+ New Session</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div id="upgrade-modal" class="modal-backdrop hidden" onclick="if(event.target===this)closeUpgrade()">
+  <div class="modal">
+    <button class="modal-x" onclick="closeUpgrade()">✕</button>
+    <div class="upgrade-icon">✦</div>
+    <h2 id="upg-title">Unlock Premium</h2>
+    <p class="modal-sub" id="upg-sub">Get unlimited access to everything TypeFromPDF offers.</p>
+    <ul class="upgrade-perks">
+      <li>Unlimited PDF uploads every month</li>
+      <li>All 18 programming languages</li>
+      <li>Upload your own code files (.py, .js, .ts…)</li>
+      <li>Typing history &amp; progress tracking</li>
+      <li>Priority email support</li>
+      <li>Early access to new features</li>
+    </ul>
+    <div class="upgrade-btns">
+      <button class="form-btn" onclick="startCheckout('yearly')">Get Yearly — $180/yr <span style="font-size:11px;opacity:.75;margin-left:4px;">($15/mo · save $24)</span></button>
+      <button class="form-btn outline-btn" onclick="startCheckout('monthly')">Get Monthly — $17/mo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── UTILS ──
+function $(id){return document.getElementById(id);}
+function esc(c){return c==='&'?'&amp;':c==='<'?'&lt;':c==='>'?'&gt;':c;}
+function setStatus(t){const el=$('status-msg');if(el)el.textContent=t;}
+
+// ── AUTH ──
+async function hashPass(p){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+const Auth={
+  all:()=>JSON.parse(localStorage.getItem('tfp_u')||'[]'),
+  me:()=>JSON.parse(localStorage.getItem('tfp_c')||'null'),
+  logout(){localStorage.removeItem('tfp_c');},
+  canPDF(){
+    const u=this.me();if(!u)return false;
+    if(u.plan==='paid')return true;
+    const m=new Date().toISOString().slice(0,7);
+    return(u.month!==m?0:u.pdfs)<3;
+  },
+  trackPDF(){
+    const u=this.me();if(!u)return;
+    const us=this.all(),i=us.findIndex(x=>x.email===u.email);
+    if(i<0)return;
+    const m=new Date().toISOString().slice(0,7);
+    if(us[i].month!==m){us[i].month=m;us[i].pdfs=0;}
+    us[i].pdfs=(us[i].pdfs||0)+1;
+    localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));
+  },
+  isPaid(){const u=this.me();return u&&u.plan==='paid';}
+};
+
+function doLogout(){Auth.logout();window.location.replace('/');}
+
+function initUserUI(){
+  const u=Auth.me();
+  if(!u){window.location.replace('/');return;}
+  $('user-avatar').textContent=u.name[0].toUpperCase();
+  $('user-name').textContent=u.name;
+  $('user-plan').textContent=u.plan==='paid'?'✦ Premium':'Free plan';
+  if(u.plan==='paid'){
+    const uc=$('upgrade-card');if(uc)uc.style.display='none';
+    const ut=$('btn-upgrade-top');if(ut)ut.classList.add('hidden');
+    // Unlock pro badge in code mode label
+    const nb=document.querySelector('#nav-code .nav-badge');if(nb)nb.remove();
+  } else {
+    $('btn-upgrade-top').classList.remove('hidden');
+  }
+  renderRecent();
+}
+
+function toggleUserMenu(){
+  $('user-dropdown').classList.toggle('hidden');
+}
+document.addEventListener('click',e=>{
+  const row=$('user-row');
+  if(row&&!row.contains(e.target))$('user-dropdown').classList.add('hidden');
+});
+
+// ── SIDEBAR ──
+function toggleSidebar(){
+  $('sidebar').classList.toggle('open');
+}
+
+// ── RECENT SESSIONS ──
+function getRecent(){return JSON.parse(localStorage.getItem('tfp_recent')||'[]');}
+function addRecent(name,mode){
+  let r=getRecent();
+  r=r.filter(x=>x.name!==name);
+  r.unshift({name,mode,time:Date.now()});
+  if(r.length>8)r=r.slice(0,8);
+  localStorage.setItem('tfp_recent',JSON.stringify(r));
+  renderRecent();
+}
+function clearRecent(){localStorage.removeItem('tfp_recent');renderRecent();}
+function renderRecent(){
+  const r=getRecent();
+  const list=$('recent-list');
+  const empty=$('recent-empty');
+  if(!r.length){empty.classList.remove('hidden');return;}
+  empty.classList.add('hidden');
+  list.innerHTML='<div class="recent-empty hidden" id="recent-empty"></div>';
+  r.forEach(item=>{
+    const div=document.createElement('div');
+    div.className='recent-item';
+    div.innerHTML=`<span class="recent-item-icon">${item.mode==='pdf'?'📄':'💻'}</span><span class="recent-item-name">${item.name}</span>`;
+    list.appendChild(div);
+  });
+}
+
+// ── UPGRADE MODAL ──
+function openUpgrade(title,sub){
+  if(title)$('upg-title').textContent=title;
+  if(sub)$('upg-sub').textContent=sub;
+  $('upgrade-modal').classList.remove('hidden');
+}
+function closeUpgrade(){$('upgrade-modal').classList.add('hidden');}
+function startCheckout(plan){
+  closeUpgrade();
+  const u=Auth.me();
+  const priceId=plan==='yearly'?'pri_01kxnqmy747shff8effyxaqnch':'pri_01kxnqh2xazqah6k33wecpq905';
+  if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again in a moment.');return;}
+  Paddle.Checkout.open({
+    items:[{priceId,quantity:1}],
+    customer:{email:u.email},
+    settings:{successUrl:'https://typefrompdf.com/success',theme:'dark',displayMode:'overlay'},
+    eventCallback(data){
+      if(data.name==='checkout.completed'){
+        const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
+        if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
+        initUserUI();
+      }
+    }
+  });
+}
+
+// ── SAMPLE TEXTS ──
+const SAMPLE_TEXTS=[
+  `The human brain retains information far better when we actively reproduce it rather than passively reading. Typing forces deep cognitive processing, strengthening memory pathways with every keystroke. When you type out your own notes and study material, you engage multiple brain systems simultaneously — visual, motor, and semantic — creating stronger, more durable memories.\n\nThis is why TypeFromPDF works. Instead of practicing with random sentences, you practice with content you need to learn. The repetition of typing your own material builds both typing speed and genuine understanding at the same time.`,
+  `Software engineering is the disciplined application of engineering principles to software development. Good software is not just code that works — it is code that is readable, maintainable, and extensible over time.\n\nThe most important skill a developer can build is not memorizing syntax, but developing the ability to think clearly about problems, break them into smaller pieces, and communicate solutions through clean, well-structured code. Practice is the only path to mastery.`,
+  `Productivity is not about doing more things. It is about doing the right things with full attention and without wasted effort. The most effective professionals learn to distinguish between tasks that are merely urgent and tasks that are genuinely important.\n\nBuilding deep work habits — the ability to focus without distraction on cognitively demanding tasks — is one of the most valuable skills in the modern economy. Typing practice with meaningful content is itself a form of deliberate practice.`
+];
+let sampleIdx=0;
+function loadSample(){
+  const text=SAMPLE_TEXTS[sampleIdx%SAMPLE_TEXTS.length];sampleIdx++;
+  loadText([text],false,'Sample Text','pdf');
+}
+
+// ── MODE SWITCHING ──
+let currentMode='pdf';
+function switchMode(mode){
+  currentMode=mode;
+  ['pdf','code'].forEach(m=>{
+    $('nav-'+m).classList.toggle('active',m===mode);
+    $(m+'-mode').classList.toggle('hidden',m!==mode);
+  });
+  $('topbar-mode-icon').textContent=mode==='pdf'?'📄':'💻';
+  $('topbar-mode-text').textContent=mode==='pdf'?'PDF Typing':'Code Typing';
+  $('typing-section').classList.add('hidden');
+  $('result-card').classList.add('hidden');
+  $('live-stats').classList.add('hidden');
+  resetTyping();
+  if(mode==='code'&&!Auth.isPaid()){
+    $('btn-upgrade-top').classList.remove('hidden');
+  }
+}
+function newSession(){
+  $('typing-section').classList.add('hidden');
+  $('result-card').classList.add('hidden');
+  $('live-stats').classList.add('hidden');
+  $('pdf-mode').classList.toggle('hidden',currentMode!=='pdf');
+  $('code-mode').classList.toggle('hidden',currentMode!=='code');
+  resetTyping();
+  setStatus('');
+}
+
+// ── PDF HANDLING ──
+const dz=$('drop-zone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');handlePDF(e.dataTransfer.files[0]);});
+$('pdf-input').addEventListener('change',e=>handlePDF(e.target.files[0]));
+
+function handlePDF(file){
+  if(!file||file.type!=='application/pdf'){setStatus('Please select a valid PDF file.');return;}
+  const u=Auth.me();
+  if(!u){window.location.replace('/');return;}
+  if(!Auth.canPDF()){
+    if(u.plan!=='paid'){
+      openUpgrade('Unlock Unlimited PDFs','You\'ve used your 3 free PDFs this month. Upgrade for unlimited access.');
+    }
+    return;
+  }
+  Auth.trackPDF();
+  setStatus('Reading your document…');
+  loadPdfJs(async()=>{
+    try{
+      const buf=await file.arrayBuffer();
+      const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+      const pages=[];
+      for(let i=1;i<=pdf.numPages;i++){
+        const page=await pdf.getPage(i);
+        const c=await page.getTextContent();
+        const text=c.items.map(it=>it.str).join(' ').replace(/\s+/g,' ').trim();
+        if(text)pages.push(text);
+      }
+      if(!pages.length){setStatus('No readable text found. This PDF may be image-based.');return;}
+      setStatus('');
+      addRecent(file.name,'pdf');
+      loadText(pages,pages.length>1,file.name,'pdf');
+    }catch(e){setStatus('Could not read this PDF. Please try another file.');}
+  });
+}
+
+// ── CODE HANDLING ──
+const PROG=[
+  {name:'Python',free:true,code:`def binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1\n\nnumbers = [1, 3, 5, 7, 9, 11, 13, 15]\nresult = binary_search(numbers, 7)\nprint(f"Found at index: {result}")`},
+  {name:'JavaScript',free:true,code:`const debounce = (fn, delay) => {\n  let timer;\n  return (...args) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...args), delay);\n  };\n};\n\nconst fetchResults = debounce(async (query) => {\n  const response = await fetch(\`/api/search?q=\${query}\`);\n  const data = await response.json();\n  console.log('Results:', data);\n}, 300);\n\ndocument.querySelector('#search').addEventListener('input', e => {\n  fetchResults(e.target.value);\n});`},
+  {name:'HTML',free:true,code:`<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8" />\n  <title>My Application</title>\n  <link rel="stylesheet" href="styles.css" />\n</head>\n<body>\n  <header class="site-header">\n    <nav class="nav">\n      <a href="/" class="nav-logo">MyApp</a>\n      <ul class="nav-links">\n        <li><a href="/about">About</a></li>\n        <li><a href="/contact">Contact</a></li>\n      </ul>\n    </nav>\n  </header>\n  <main class="main">\n    <h1>Welcome to MyApp</h1>\n    <p>Start building something amazing.</p>\n  </main>\n</body>\n</html>`},
+  {name:'CSS',free:true,code:`:root {\n  --primary: #7c6dfa;\n  --bg: #0a0a0f;\n  --text: #f0f0ff;\n  --radius: 12px;\n}\n\n*, *::before, *::after {\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n}\n\nbody {\n  font-family: 'Inter', sans-serif;\n  background: var(--bg);\n  color: var(--text);\n  line-height: 1.6;\n}\n\n.container {\n  max-width: 1100px;\n  margin: 0 auto;\n  padding: 0 2rem;\n}\n\n.btn {\n  padding: 12px 28px;\n  background: var(--primary);\n  color: #fff;\n  border: none;\n  border-radius: var(--radius);\n  font-weight: 700;\n  cursor: pointer;\n}`},
+  {name:'Java',free:true,code:`import java.util.Arrays;\nimport java.util.List;\nimport java.util.stream.Collectors;\n\npublic class StreamExample {\n    public static void main(String[] args) {\n        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);\n\n        List<Integer> result = numbers.stream()\n            .filter(n -> n % 2 == 0)\n            .map(n -> n * n)\n            .sorted()\n            .collect(Collectors.toList());\n\n        System.out.println("Squared even: " + result);\n    }\n}`},
+  {name:'TypeScript',free:false,code:`interface Repository<T> {\n  findById(id: string): Promise<T | null>;\n  findAll(): Promise<T[]>;\n  save(entity: T): Promise<T>;\n  delete(id: string): Promise<void>;\n}\n\ninterface User {\n  id: string;\n  name: string;\n  email: string;\n  createdAt: Date;\n}\n\nclass UserRepository implements Repository<User> {\n  private users: Map<string, User> = new Map();\n\n  async findById(id: string): Promise<User | null> {\n    return this.users.get(id) ?? null;\n  }\n\n  async save(user: User): Promise<User> {\n    this.users.set(user.id, user);\n    return user;\n  }\n}`},
+  {name:'C',free:false,code:`#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node* next;\n} Node;\n\nNode* createNode(int value) {\n    Node* node = (Node*)malloc(sizeof(Node));\n    node->value = value;\n    node->next = NULL;\n    return node;\n}\n\nvoid pushFront(Node** head, int value) {\n    Node* node = createNode(value);\n    node->next = *head;\n    *head = node;\n}\n\nvoid printList(Node* head) {\n    while (head) {\n        printf("%d -> ", head->value);\n        head = head->next;\n    }\n    printf("NULL\\n");\n}\n\nint main() {\n    Node* list = NULL;\n    for (int i = 5; i >= 1; i--) pushFront(&list, i);\n    printList(list);\n    return 0;\n}`},
+  {name:'C++',free:false,code:`#include <iostream>\n#include <vector>\n\ntemplate<typename T>\nclass MinHeap {\n    std::vector<T> data;\n    void heapifyUp(int i) {\n        while (i > 0 && data[(i-1)/2] > data[i]) {\n            std::swap(data[(i-1)/2], data[i]);\n            i = (i-1)/2;\n        }\n    }\npublic:\n    void push(T val) { data.push_back(val); heapifyUp(data.size()-1); }\n    T top() { return data[0]; }\n    bool empty() { return data.empty(); }\n};\n\nint main() {\n    MinHeap<int> heap;\n    for (int x : {5, 2, 8, 1, 9, 3, 7}) heap.push(x);\n    std::cout << "Min: " << heap.top() << std::endl;\n    return 0;\n}`},
+  {name:'C#',free:false,code:`using System;\nusing System.Collections.Generic;\nusing System.Threading.Tasks;\n\npublic class AsyncPipeline<T>\n{\n    private readonly List<Func<T, Task<T>>> steps = new();\n\n    public AsyncPipeline<T> AddStep(Func<T, Task<T>> step)\n    {\n        steps.Add(step);\n        return this;\n    }\n\n    public async Task<T> Execute(T input)\n    {\n        var result = input;\n        foreach (var step in steps)\n            result = await step(result);\n        return result;\n    }\n}`},
+  {name:'Go',free:false,code:`package main\n\nimport (\n\t"fmt"\n\t"sync"\n)\n\ntype WorkerPool struct {\n\tjobs chan func()\n\twg   sync.WaitGroup\n}\n\nfunc NewWorkerPool(workers int) *WorkerPool {\n\tp := &WorkerPool{jobs: make(chan func(), 100)}\n\tfor i := 0; i < workers; i++ {\n\t\tgo func() {\n\t\t\tfor job := range p.jobs {\n\t\t\t\tjob()\n\t\t\t\tp.wg.Done()\n\t\t\t}\n\t\t}()\n\t}\n\treturn p\n}\n\nfunc (p *WorkerPool) Submit(job func()) {\n\tp.wg.Add(1)\n\tp.jobs <- job\n}\n\nfunc (p *WorkerPool) Wait() { p.wg.Wait() }\n\nfunc main() {\n\tpool := NewWorkerPool(4)\n\tfor i := 1; i <= 8; i++ {\n\t\ti := i\n\t\tpool.Submit(func() { fmt.Printf("Job %d done\\n", i) })\n\t}\n\tpool.Wait()\n}`},
+  {name:'Rust',free:false,code:`use std::collections::HashMap;\n\nfn word_frequency(text: &str) -> Vec<(&str, usize)> {\n    let mut map: HashMap<&str, usize> = HashMap::new();\n    for word in text.split_whitespace() {\n        *map.entry(word).or_insert(0) += 1;\n    }\n    let mut pairs: Vec<_> = map.into_iter().collect();\n    pairs.sort_by(|a, b| b.1.cmp(&a.1));\n    pairs\n}\n\nfn main() {\n    let text = "the quick brown fox jumps over the lazy dog";\n    let frequencies = word_frequency(text);\n    for (word, count) in frequencies.iter().take(5) {\n        println!("{:12} {}", word, count);\n    }\n}`},
+  {name:'PHP',free:false,code:`<?php\ndeclare(strict_types=1);\n\nclass EventDispatcher\n{\n    private array $listeners = [];\n\n    public function on(string $event, callable $listener): void\n    {\n        $this->listeners[$event][] = $listener;\n    }\n\n    public function emit(string $event, mixed ...$args): void\n    {\n        foreach ($this->listeners[$event] ?? [] as $listener) {\n            $listener(...$args);\n        }\n    }\n}\n\n$dispatcher = new EventDispatcher();\n$dispatcher->on('user.created', fn($name) => print("Welcome, {$name}!\\n"));\n$dispatcher->emit('user.created', 'Bala');`},
+  {name:'Ruby',free:false,code:`module Enumerable\n  def group_by_frequency\n    each_with_object(Hash.new(0)) { |item, h| h[item] += 1 }\n      .sort_by { |_, v| -v }\n      .to_h\n  end\nend\n\nwords = %w[apple banana apple cherry banana apple]\nfrequency = words.group_by_frequency\nputs "Word frequency:"\nfrequency.each { |word, count| puts "  #{word}: #{count}" }`},
+  {name:'Swift',free:false,code:`import Foundation\n\nfinal class Cache<T> {\n    private var store: [String: (value: T, expiry: Date)] = [:]\n    private let ttl: TimeInterval\n\n    init(ttl: TimeInterval = 300) {\n        self.ttl = ttl\n    }\n\n    func set(_ key: String, value: T) {\n        store[key] = (value, Date().addingTimeInterval(ttl))\n    }\n\n    func get(_ key: String) -> T? {\n        guard let entry = store[key], entry.expiry > Date() else {\n            store.removeValue(forKey: key)\n            return nil\n        }\n        return entry.value\n    }\n}`},
+  {name:'Kotlin',free:false,code:`data class Result<out T>(val value: T?, val error: String?) {\n    val isSuccess get() = error == null\n\n    companion object {\n        fun <T> success(value: T) = Result(value, null)\n        fun <T> failure(error: String) = Result<T>(null, error)\n    }\n}\n\nfun divide(a: Int, b: Int): Result<Double> =\n    if (b == 0) Result.failure("Division by zero")\n    else Result.success(a.toDouble() / b)\n\nfun main() {\n    listOf(10 to 2, 7 to 0, 15 to 3).forEach { (a, b) ->\n        val result = divide(a, b)\n        if (result.isSuccess) println("$a / $b = \${result.value}")\n        else println("Error: \${result.error}")\n    }\n}`},
+  {name:'SQL',free:false,code:`-- Customer lifetime value analysis\nWITH customer_orders AS (\n    SELECT\n        c.id, c.name, c.email,\n        COUNT(o.id)         AS total_orders,\n        SUM(o.total_amount) AS lifetime_value,\n        AVG(o.total_amount) AS avg_order_value,\n        MAX(o.created_at)   AS last_order_date\n    FROM customers c\n    LEFT JOIN orders o ON c.id = o.customer_id\n        AND o.status = 'completed'\n    GROUP BY c.id, c.name, c.email\n),\nranked AS (\n    SELECT *,\n        NTILE(4) OVER (ORDER BY lifetime_value DESC) AS value_quartile\n    FROM customer_orders\n    WHERE total_orders > 0\n)\nSELECT * FROM ranked\nWHERE value_quartile = 1\nORDER BY lifetime_value DESC\nLIMIT 50;`},
+  {name:'Dart',free:false,code:`import 'dart:async';\n\nclass RxStream<T> {\n  final _controller = StreamController<T>.broadcast();\n  T? _lastValue;\n\n  Stream<T> get stream => _controller.stream;\n  T? get value => _lastValue;\n\n  void add(T value) {\n    _lastValue = value;\n    _controller.add(value);\n  }\n\n  Stream<T> where(bool Function(T) test) => stream.where(test);\n\n  void dispose() => _controller.close();\n}\n\nvoid main() async {\n  final counter = RxStream<int>();\n  counter.where((n) => n.isEven).listen((n) => print('Even: \$n'));\n  for (var i = 1; i <= 6; i++) counter.add(i);\n  await Future.delayed(Duration.zero);\n  counter.dispose();\n}`},
+  {name:'R',free:false,code:`set.seed(42)\n\ndf <- data.frame(\n  score    = round(rnorm(200, mean = 70, sd = 15)),\n  group    = sample(c("A", "B", "C"), 200, replace = TRUE),\n  attempts = sample(1:5, 200, replace = TRUE)\n)\n\ndf$score <- pmax(0, pmin(100, df$score))\n\nsummary_stats <- aggregate(\n  score ~ group,\n  data = df,\n  FUN = function(x) c(\n    mean   = round(mean(x), 1),\n    median = median(x),\n    sd     = round(sd(x), 1),\n    n      = length(x)\n  )\n)\n\nprint(summary_stats)`},
+];
+
+function buildProgGrid(){
+  const grid=$('prog-grid');
+  PROG.forEach(l=>{
+    const btn=document.createElement('button');
+    btn.className='prog-btn'+(l.free?'':(!Auth.isPaid()?' locked':''));
+    btn.innerHTML=`<div class="prog-name">${l.name}</div><span class="prog-badge ${l.free?'badge-free':'badge-pro'}">${l.free?'FREE':'PRO'}</span>`;
+    btn.onclick=()=>{
+      if(!l.free&&!Auth.isPaid()){openUpgrade(l.name+' requires Premium','Upgrade to access all 18 programming languages.');return;}
+      document.querySelectorAll('.prog-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      addRecent(l.name+' snippet','code');
+      loadText([l.code],false,l.name,'code');
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function togglePaste(){$('paste-panel').classList.toggle('hidden');}
+function loadPasted(){
+  const code=$('paste-inp').value.trim();if(!code)return;
+  $('paste-panel').classList.add('hidden');
+  addRecent('Pasted code','code');
+  loadText([code],false,'Pasted code','code');
+}
+
+$('code-file-inp').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  if(!Auth.isPaid()){openUpgrade('Upload Code Files — Premium','Upload your own code files on any paid plan.');e.target.value='';return;}
+  const r=new FileReader();
+  r.onload=ev=>{addRecent(file.name,'code');loadText([ev.target.result],false,file.name,'code');};
+  r.readAsText(file);
+});
+
+// ── TYPING ENGINE ──
+let pages=[],currentPage=0,startTime=null,timerInterval=null,elapsed=0;
+let sessionName='';
+
+function loadText(texts,showNav,name,mode){
+  pages=texts;currentPage=0;sessionName=name||'Untitled';
+  $('pdf-mode').classList.add('hidden');
+  $('code-mode').classList.add('hidden');
+  $('result-card').classList.add('hidden');
+  $('typing-section').classList.remove('hidden');
+  $('live-stats').classList.remove('hidden');
+  $('page-nav').classList.toggle('hidden',!(showNav&&pages.length>1));
+  renderPage();
+}
+
+function renderPage(){
+  const target=pages[currentPage];
+  const gl=$('ghost-layer'),cl=$('char-layer'),inp=$('typing-input');
+  gl.textContent=target;cl.innerHTML='';inp.value='';
+  inp.style.height=Math.max(340,gl.scrollHeight+60)+'px';
+  if(pages.length>1){
+    $('page-info').textContent=`${currentPage+1} / ${pages.length}`;
+    $('btn-prev').disabled=currentPage===0;
+    $('btn-next').disabled=currentPage===pages.length-1;
+  }
+  $('s-wpm').textContent='—';$('s-acc').textContent='—';$('s-prog').textContent='0%';$('s-time').textContent='0s';
+  $('prog-fill').style.width='0%';
+  startTime=null;elapsed=0;clearInterval(timerInterval);
+  inp.focus();
+}
+
+function changePage(dir){
+  const n=currentPage+dir;
+  if(n<0||n>=pages.length)return;
+  currentPage=n;renderPage();
+}
+
+function resetTyping(){
+  if(pages.length)renderPage();
+  else{$('typing-section').classList.add('hidden');$('result-card').classList.add('hidden');$('live-stats').classList.add('hidden');}
+}
+
+function retrySession(){$('result-card').classList.add('hidden');$('typing-section').classList.remove('hidden');renderPage();}
+
+$('typing-input').addEventListener('input',function(){
+  const typed=this.value,target=pages[currentPage]||'';
+  if(!startTime&&typed.length>0){
+    startTime=Date.now();
+    timerInterval=setInterval(()=>{
+      elapsed=Math.floor((Date.now()-startTime)/1000);
+      $('s-time').textContent=elapsed>59?Math.floor(elapsed/60)+'m '+(elapsed%60)+'s':elapsed+'s';
+      updateWPM();
+    },500);
+  }
+  if(!typed.length){startTime=null;elapsed=0;clearInterval(timerInterval);$('s-wpm').textContent='—';$('s-time').textContent='0s';}
+  let html='',ok=0;
+  for(let i=0;i<target.length;i++){
+    const ch=esc(target[i]);
+    if(i<typed.length){
+      if(typed[i]===target[i]){html+=`<span class="c-ok">${ch}</span>`;ok++;}
+      else html+=`<span class="c-err">${ch}</span>`;
+    } else html+=`<span style="color:transparent">${ch}</span>`;
+  }
+  $('char-layer').innerHTML=html;
+  const pct=target.length?Math.min(100,Math.round((typed.length/target.length)*100)):0;
+  $('s-prog').textContent=pct+'%';
+  $('prog-fill').style.width=pct+'%';
+  if(typed.length){$('s-acc').textContent=Math.round((ok/Math.min(typed.length,target.length))*100)+'%';}
+  this.style.height=Math.max(340,$('ghost-layer').scrollHeight+60)+'px';
+  // Check completion
+  if(typed.length>=target.length&&typed.length>10){
+    clearInterval(timerInterval);
+    showResult(ok,typed.length,target.length);
+  }
+});
+
+function updateWPM(){
+  if(!startTime)return;
+  const mins=(Date.now()-startTime)/60000;
+  const words=$('typing-input').value.trim().split(/\s+/).filter(Boolean).length;
+  $('s-wpm').textContent=mins>0.05?Math.round(words/mins):'—';
+}
+
+function showResult(ok,typed,total){
+  const wpm=parseInt($('s-wpm').textContent)||0;
+  const acc=Math.round((ok/Math.min(typed,total))*100);
+  const timeStr=$('s-time').textContent;
+  $('r-wpm').textContent=wpm||'—';
+  $('r-acc').textContent=acc+'%';
+  $('r-time').textContent=timeStr;
+  const msgs=['Amazing work! 🚀','Excellent typing! ⚡','Keep it up! 💪','Great session! ✨'];
+  $('result-sub').textContent=msgs[Math.floor(Math.random()*msgs.length)];
+  // Save session to history
+  saveSessionHistory({name:sessionName,wpm,acc,time:timeStr,mode:currentMode,date:new Date().toISOString()});
+  setTimeout(()=>{
+    $('typing-section').classList.add('hidden');
+    $('live-stats').classList.add('hidden');
+    $('result-card').classList.remove('hidden');
+    $('app-content').scrollTo({top:0,behavior:'smooth'});
+  },600);
+}
+
+function saveSessionHistory(s){
+  let h=JSON.parse(localStorage.getItem('tfp_history')||'[]');
+  h.unshift(s);if(h.length>50)h=h.slice(0,50);
+  localStorage.setItem('tfp_history',JSON.stringify(h));
+}
+
+// ── INIT ──
+buildProgGrid();
+initUserUI();
+</script>
+</body>
+</html>

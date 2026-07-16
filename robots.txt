@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /pricing.html
+Allow: /about.html
+Allow: /contact.html
+Allow: /terms.html
+Allow: /privacy.html
+Allow: /cookies.html
+Disallow: /app
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /success
+Disallow: /cancel
+
+Sitemap: https://typefrompdf.com/sitemap.xml

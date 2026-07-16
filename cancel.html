@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Payment Cancelled — TypeFromPDF</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#03030d;--bg2:#08081c;--bg3:#0c0c22;
+  --border:#1a1a3a;--border2:#252550;--border3:#353568;
+  --text:#f0f0ff;--text2:#7070a8;--text3:#36365a;
+  --accent:#7c6dfa;--accent3:#bfb8ff;
+  --accent-glow:rgba(124,109,250,.28);
+  --red:#ff6b6b;--red-bg:rgba(255,107,107,.08);--red-border:rgba(255,107,107,.2);
+  --grad:linear-gradient(135deg,#6c5ce7 0%,#7c6dfa 50%,#a29bfe 100%);
+  --r12:12px;--r16:16px;--r20:20px;--r24:24px;
+}
+html{background:var(--bg);min-height:100vh;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r24);
+  padding:3rem 2.5rem;max-width:480px;width:100%;text-align:center;
+  box-shadow:0 32px 80px rgba(0,0,0,.6);
+}
+.cancel-icon{width:72px;height:72px;border-radius:50%;background:var(--red-bg);border:2px solid var(--red-border);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:30px;}
+h1{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:.5rem;}
+.sub{font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:1.75rem;}
+.reasons{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r16);padding:1.25rem;margin-bottom:1.75rem;text-align:left;}
+.reasons h3{font-size:11px;font-weight:800;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.75rem;}
+.reason{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:13.5px;color:var(--text2);border-bottom:1px solid var(--border);}
+.reason:last-child{border-bottom:none;}
+.reason-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.faq{margin-bottom:1.75rem;text-align:left;}
+.faq-item{border:1px solid var(--border);border-radius:var(--r12);padding:14px;margin-bottom:8px;}
+.faq-q{font-size:13px;font-weight:700;margin-bottom:4px;}
+.faq-a{font-size:12.5px;color:var(--text2);line-height:1.65;}
+.faq-a a{color:var(--accent3);}
+.actions{display:flex;flex-direction:column;gap:10px;}
+.btn-primary{
+  padding:13px;border-radius:var(--r12);background:var(--grad);color:#fff;
+  font-size:14.5px;font-weight:700;border:none;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 20px var(--accent-glow);
+  text-decoration:none;display:block;
+}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+.btn-outline{
+  padding:12px;border-radius:var(--r12);background:transparent;color:var(--text2);
+  font-size:14px;font-weight:600;border:1px solid var(--border2);
+  transition:all .2s;text-decoration:none;display:block;cursor:pointer;
+}
+.btn-outline:hover{border-color:var(--border3);color:var(--text);}
+.logo{font-size:15px;font-weight:900;letter-spacing:-.6px;margin-bottom:2rem;display:block;}
+.logo .gr{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+</style>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>window.addEventListener('load',()=>{if(typeof Paddle!=='undefined')Paddle.Setup({token:'live_e012be157ab7779131b2afb0f6e'});});</script>
+</head>
+<body>
+<div class="card">
+  <a href="/" class="logo">Type<span class="gr">FromPDF</span></a>
+  <div class="cancel-icon">✕</div>
+  <h1>Payment Not Completed</h1>
+  <p class="sub">No worries — your payment was cancelled and you haven't been charged. You can try again anytime, or continue using TypeFromPDF for free.</p>
+
+  <div class="reasons">
+    <h3>Common reasons payments fail</h3>
+    <div class="reason"><span class="reason-icon">💳</span> Card details entered incorrectly — double-check the number and expiry.</div>
+    <div class="reason"><span class="reason-icon">🏦</span> Bank blocked the transaction — contact your bank or try a different card.</div>
+    <div class="reason"><span class="reason-icon">🌐</span> Temporary network issue — try again in a few minutes.</div>
+    <div class="reason"><span class="reason-icon">💰</span> Insufficient funds — try a different payment method.</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-item">
+      <div class="faq-q">Was I charged?</div>
+      <div class="faq-a">No. If the payment didn't complete, you were not charged. Check your bank statement — any pending hold will be released within 1–5 business days.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Need help with payment?</div>
+      <div class="faq-a">Email us at <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a> — we'll help you get sorted.</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" onclick="retryPayment()">Try Again →</button>
+    <a href="/app" class="btn-outline">Continue with Free Plan</a>
+  </div>
+</div>
+<script>
+function retryPayment(){
+  const u=JSON.parse(localStorage.getItem('tfp_c')||'null');
+  if(!u){window.location.href='/';return;}
+  if(typeof Paddle==='undefined'){window.location.href='/pricing.html';return;}
+  Paddle.Checkout.open({
+    items:[{priceId:'pri_01kxnqmy747shff8effyxaqnch',quantity:1}],
+    customer:{email:u.email},
+    settings:{successUrl:'https://typefrompdf.com/success',theme:'dark',displayMode:'overlay'},
+    eventCallback(data){
+      if(data.name==='checkout.completed'){
+        const us=JSON.parse(localStorage.getItem('tfp_u')||'[]');
+        const i=us.findIndex(x=>x.email===u.email);
+        if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
+        window.location.href='/success';
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

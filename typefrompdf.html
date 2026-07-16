@@ -5,8 +5,31 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>TypeFromPDF — Build Real Typing Speed with Your Own Content</title>
 <meta name="description" content="Upload any PDF and type over ghost text to build speed, accuracy and memory. Practice with your own notes, textbooks, and code — not random sentences. 100% private, in-browser."/>
+<link rel="canonical" href="https://typefrompdf.com/"/>
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://typefrompdf.com/"/>
+<meta property="og:title" content="TypeFromPDF — Build Real Typing Speed with Your Own Content"/>
+<meta property="og:description" content="Upload any PDF and type over ghost text to build speed, accuracy and memory. Practice with your own notes, textbooks, and code — not random sentences."/>
+<meta property="og:image" content="https://typefrompdf.com/og-image.png"/>
+<meta property="og:site_name" content="TypeFromPDF"/>
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="TypeFromPDF — Build Real Typing Speed with Your Own Content"/>
+<meta name="twitter:description" content="Upload any PDF and type over ghost text. Practice with your own notes, textbooks, and code. 100% private."/>
+<meta name="twitter:image" content="https://typefrompdf.com/og-image.png"/>
+<!-- Schema.org WebApplication -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"TypeFromPDF","url":"https://typefrompdf.com","description":"Upload any PDF and type over ghost text to build real typing speed, accuracy, and memory with your own content.","applicationCategory":"EducationalApplication","operatingSystem":"Web","offers":[{"@type":"Offer","name":"Free Plan","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Monthly Plan","price":"17","priceCurrency":"USD","billingIncrement":"P1M"},{"@type":"Offer","name":"Yearly Plan","price":"180","priceCurrency":"USD","billingIncrement":"P1Y"}],"author":{"@type":"Person","name":"Balakumar S"},"featureList":["PDF typing practice","18 programming languages","Real-time WPM tracking","100% private in-browser processing"]}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<!-- Paddle Payments -->
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>window.addEventListener('load',()=>{if(typeof Paddle!=='undefined')Paddle.Setup({token:'live_e012be157ab7779131b2afb0f6e'});});</script>
+<!-- EmailJS (OTP for password reset) — replace with your EmailJS public key -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>window.addEventListener('load',()=>{if(typeof emailjs!=='undefined')emailjs.init({publicKey:'YOUR_EMAILJS_PUBLIC_KEY'});});</script>
 <script>
 function loadPdfJs(cb){
   if(window.pdfjsLib){cb();return;}
@@ -333,10 +356,14 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2re
 <div id="auth-modal" class="modal-backdrop hidden" onclick="if(event.target===this)closeAuth()">
   <div class="modal">
     <button class="modal-x" onclick="closeAuth()">✕</button>
-    <div class="modal-tabs">
+
+    <!-- SIGN UP / LOG IN TABS -->
+    <div id="auth-tabs-bar" class="modal-tabs">
       <button class="modal-tab active" id="tab-su" onclick="switchTab('su')">Sign Up</button>
       <button class="modal-tab" id="tab-li" onclick="switchTab('li')">Log In</button>
     </div>
+
+    <!-- SIGN UP FORM -->
     <div id="form-su">
       <h2>Create your account</h2>
       <p class="modal-sub">Free forever · No credit card needed</p>
@@ -347,6 +374,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2re
       <div class="auth-msg" id="su-msg"></div>
       <p class="auth-switch">Already have an account? <a onclick="switchTab('li')">Log In</a></p>
     </div>
+
+    <!-- LOG IN FORM -->
     <div id="form-li" class="hidden">
       <h2>Welcome back</h2>
       <p class="modal-sub">Continue your typing journey</p>
@@ -354,8 +383,42 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2re
       <div class="form-group"><label class="form-label">Password</label><div class="pw-wrap"><input class="form-input" type="password" id="li-pass" placeholder="Your password" autocomplete="current-password" oninput="clearErr('li-pass','li-msg')" onkeydown="if(event.key==='Enter')doLogin()"/><button class="pw-eye" type="button" onclick="togglePw('li-pass',this)" tabindex="-1">👁</button></div></div>
       <button class="form-btn" id="li-btn" onclick="doLogin()">Log In →</button>
       <div class="auth-msg" id="li-msg"></div>
-      <p class="auth-switch">New here? <a onclick="switchTab('su')">Create a free account</a></p>
+      <p class="auth-switch" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>New here? <a onclick="switchTab('su')">Create a free account</a></span>
+        <a onclick="switchToForgot()" style="font-size:12px;color:var(--text3);">Forgot password?</a>
+      </p>
     </div>
+
+    <!-- FORGOT PASSWORD — STEP 1: Enter Email -->
+    <div id="form-fp" class="hidden">
+      <h2>Reset password</h2>
+      <p class="modal-sub">We'll send a 6-digit code to your email</p>
+      <div class="form-group"><label class="form-label">Your Email</label><input class="form-input" type="email" id="fp-email" placeholder="you@example.com" oninput="clearErr('fp-email','fp-msg')" onkeydown="if(event.key==='Enter')sendOTP()"/></div>
+      <button class="form-btn" id="fp-btn" onclick="sendOTP()">Send Reset Code →</button>
+      <div class="auth-msg" id="fp-msg"></div>
+      <p class="auth-switch"><a onclick="switchTab('li')">← Back to Log In</a></p>
+    </div>
+
+    <!-- FORGOT PASSWORD — STEP 2: Enter OTP -->
+    <div id="form-otp" class="hidden">
+      <h2>Enter your code</h2>
+      <p class="modal-sub" id="otp-sub">We sent a 6-digit code to your email</p>
+      <div class="form-group"><label class="form-label">6-Digit Code</label><input class="form-input" type="text" id="otp-inp" placeholder="123456" maxlength="6" inputmode="numeric" oninput="clearErr('otp-inp','otp-msg')" onkeydown="if(event.key==='Enter')verifyOTP()"/></div>
+      <button class="form-btn" id="otp-btn" onclick="verifyOTP()">Verify Code →</button>
+      <div class="auth-msg" id="otp-msg"></div>
+      <p class="auth-switch"><a onclick="switchToForgot()">← Resend code</a></p>
+    </div>
+
+    <!-- FORGOT PASSWORD — STEP 3: New Password -->
+    <div id="form-newpw" class="hidden">
+      <h2>Set new password</h2>
+      <p class="modal-sub">Choose a strong password for your account</p>
+      <div class="form-group"><label class="form-label">New Password</label><div class="pw-wrap"><input class="form-input" type="password" id="np-pass" placeholder="Min. 6 characters" oninput="clearErr('np-pass','np-msg')" onkeydown="if(event.key==='Enter')doResetPassword()"/><button class="pw-eye" type="button" onclick="togglePw('np-pass',this)" tabindex="-1">👁</button></div></div>
+      <div class="form-group"><label class="form-label">Confirm Password</label><div class="pw-wrap"><input class="form-input" type="password" id="np-pass2" placeholder="Same password again" oninput="clearErr('np-pass2','np-msg')" onkeydown="if(event.key==='Enter')doResetPassword()"/><button class="pw-eye" type="button" onclick="togglePw('np-pass2',this)" tabindex="-1">👁</button></div></div>
+      <button class="form-btn" id="np-btn" onclick="doResetPassword()">Update Password →</button>
+      <div class="auth-msg" id="np-msg"></div>
+    </div>
+
   </div>
 </div>
 
@@ -591,7 +654,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2re
         <li>Upload your own code files</li>
         <li>Typing history &amp; progress</li>
       </ul>
-      <button class="pm-cta filled" onclick="openEarly('Yearly Plan — $180/yr','Get notified the moment our yearly plan goes live and lock in an early-bird rate.')">Get Yearly — $180/yr</button>
+      <button class="pm-cta filled" onclick="openPaddleCheckout('yearly')">Get Yearly — $180/yr</button>
     </div>
     <div class="plan-mini">
       <div class="pm-tier">Monthly</div>
@@ -603,7 +666,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2re
         <li>Upload your own code files</li>
         <li>Priority support</li>
       </ul>
-      <button class="pm-cta outline" onclick="openEarly('Monthly Plan — $17/mo','Get notified the moment our monthly plan goes live.')">Get Monthly →</button>
+      <button class="pm-cta outline" onclick="openPaddleCheckout('monthly')">Get Monthly →</button>
     </div>
   </div>
   <p class="pricing-more">See the full feature comparison → <a href="pricing.html">View all plans</a></p>
@@ -727,29 +790,69 @@ const Auth={
   isPaid(){const u=this.me();return u&&u.plan==='paid';}
 };
 
-function openAuth(tab){
-  switchTab(tab);
-  $('auth-modal').classList.remove('hidden');
-  setTimeout(()=>{
-    const f=tab==='su'?$('su-name'):$('li-email');
-    if(f)f.focus();
-  },80);
+// ── PADDLE CHECKOUT ──
+function openPaddleCheckout(plan){
+  const u=Auth.me();
+  if(!u){openAuth('su');return;}
+  const priceId=plan==='yearly'?'pri_01kxnqmy747shff8effyxaqnch':'pri_01kxnqh2xazqah6k33wecpq905';
+  if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again in a moment.');return;}
+  Paddle.Checkout.open({
+    items:[{priceId,quantity:1}],
+    customer:{email:u.email},
+    settings:{
+      successUrl:'https://typefrompdf.com/success',
+      theme:'dark',
+      displayMode:'overlay',
+    },
+    eventCallback(data){
+      if(data.name==='checkout.completed'){
+        const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
+        if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
+      }
+    }
+  });
 }
+
+// ── AUTH MODALS ──
+let fpEmail='',fpOTP='';
+
+function showAuthPanel(id){
+  ['form-su','form-li','form-fp','form-otp','form-newpw'].forEach(f=>{$(f).classList.add('hidden');});
+  const tabBar=$('auth-tabs-bar');
+  if(id==='form-su'||id==='form-li'){
+    tabBar.classList.remove('hidden');
+    ['su','li'].forEach(x=>$('tab-'+x).classList.toggle('active',('form-'+x)===id));
+  } else {
+    tabBar.classList.add('hidden');
+  }
+  $(id).classList.remove('hidden');
+}
+
+function openAuth(tab){
+  $('auth-modal').classList.remove('hidden');
+  showAuthPanel('form-'+tab);
+  setTimeout(()=>{const f=tab==='su'?$('su-name'):$('li-email');if(f)f.focus();},80);
+}
+
 function closeAuth(){
   $('auth-modal').classList.add('hidden');
-  ['su-name','su-email','su-pass','li-email','li-pass'].forEach(id=>{const el=$(id);if(el){el.value='';el.classList.remove('err-input');}});
-  ['su-msg','li-msg'].forEach(id=>{const el=$(id);if(el){el.textContent='';el.className='auth-msg';}});
+  ['su-name','su-email','su-pass','li-email','li-pass','fp-email','otp-inp','np-pass','np-pass2'].forEach(id=>{const el=$(id);if(el){el.value='';el.classList.remove('err-input');}});
+  ['su-msg','li-msg','fp-msg','otp-msg','np-msg'].forEach(id=>{const el=$(id);if(el){el.textContent='';el.className='auth-msg';}});
+  fpEmail='';fpOTP='';
 }
+
 function switchTab(t){
-  ['su','li'].forEach(x=>{
-    $('form-'+x).classList.toggle('hidden',x!==t);
-    $('tab-'+x).classList.toggle('active',x===t);
-  });
-  setTimeout(()=>{
-    const f=t==='su'?$('su-name'):$('li-email');
-    if(f)f.focus();
-  },60);
+  showAuthPanel('form-'+t);
+  setTimeout(()=>{const f=t==='su'?$('su-name'):$('li-email');if(f)f.focus();},60);
 }
+
+function switchToForgot(){
+  showAuthPanel('form-fp');
+  const li=$('li-email');
+  if(li&&li.value)$('fp-email').value=li.value;
+  setTimeout(()=>$('fp-email').focus(),60);
+}
+
 async function doSignup(){
   const btn=$('su-btn');
   btn.disabled=true;btn.textContent='Creating account…';
@@ -760,10 +863,11 @@ async function doSignup(){
     if(r.field)markErr(r.field);
     btn.disabled=false;btn.textContent='Create Free Account →';
   } else {
-    m.textContent='✓ Account created! Welcome aboard.';m.className='auth-msg ok';
-    setTimeout(()=>{closeAuth();updateNav();$('app').scrollIntoView({behavior:'smooth'});},900);
+    m.textContent='✓ Account created! Redirecting…';m.className='auth-msg ok';
+    setTimeout(()=>{window.location.href='/app';},900);
   }
 }
+
 async function doLogin(){
   const btn=$('li-btn');
   btn.disabled=true;btn.textContent='Logging in…';
@@ -774,15 +878,69 @@ async function doLogin(){
     if(r.field)markErr(r.field);
     btn.disabled=false;btn.textContent='Log In →';
   } else {
-    m.textContent='✓ Welcome back!';m.className='auth-msg ok';
-    setTimeout(()=>{closeAuth();updateNav();},800);
+    m.textContent='✓ Welcome back! Redirecting…';m.className='auth-msg ok';
+    setTimeout(()=>{window.location.href='/app';},800);
   }
+}
+
+// ── FORGOT PASSWORD OTP ──
+async function sendOTP(){
+  const email=$('fp-email').value.trim();
+  const msg=$('fp-msg'),btn=$('fp-btn');
+  if(!validEmail(email)){msg.textContent='Please enter a valid email.';msg.className='auth-msg err';markErr('fp-email');return;}
+  const users=Auth.all();
+  if(!users.find(u=>u.email===email.toLowerCase())){msg.textContent='No account found with this email.';msg.className='auth-msg err';markErr('fp-email');return;}
+  btn.disabled=true;btn.textContent='Sending…';
+  fpEmail=email.toLowerCase();
+  fpOTP=String(Math.floor(100000+Math.random()*900000));
+  // Store OTP with 15-min expiry
+  localStorage.setItem('tfp_otp',JSON.stringify({email:fpEmail,code:fpOTP,expires:Date.now()+15*60*1000}));
+  // Send via EmailJS (configure your EmailJS keys in the head script)
+  try{
+    if(typeof emailjs!=='undefined'){
+      await emailjs.send('YOUR_SERVICE_ID','YOUR_TEMPLATE_ID',{to_email:fpEmail,otp_code:fpOTP,to_name:fpEmail.split('@')[0]});
+    } else {
+      // Fallback: show code on screen (dev mode)
+      console.log('OTP (dev):', fpOTP);
+    }
+  }catch(e){console.warn('EmailJS error',e);}
+  $('otp-sub').textContent=`We sent a 6-digit code to ${fpEmail}`;
+  showAuthPanel('form-otp');
+  setTimeout(()=>$('otp-inp').focus(),60);
+  btn.disabled=false;btn.textContent='Send Reset Code →';
+}
+
+function verifyOTP(){
+  const entered=$('otp-inp').value.trim();
+  const msg=$('otp-msg'),btn=$('otp-btn');
+  const stored=JSON.parse(localStorage.getItem('tfp_otp')||'null');
+  if(!stored||stored.email!==fpEmail){msg.textContent='OTP expired. Please request a new code.';msg.className='auth-msg err';return;}
+  if(Date.now()>stored.expires){msg.textContent='Code expired. Please request a new one.';msg.className='auth-msg err';localStorage.removeItem('tfp_otp');return;}
+  if(entered!==stored.code){msg.textContent='Incorrect code. Please try again.';msg.className='auth-msg err';markErr('otp-inp');return;}
+  localStorage.removeItem('tfp_otp');
+  showAuthPanel('form-newpw');
+  setTimeout(()=>$('np-pass').focus(),60);
+}
+
+async function doResetPassword(){
+  const p1=$('np-pass').value,p2=$('np-pass2').value;
+  const msg=$('np-msg'),btn=$('np-btn');
+  if(p1.length<6){msg.textContent='Password must be at least 6 characters.';msg.className='auth-msg err';markErr('np-pass');return;}
+  if(p1!==p2){msg.textContent='Passwords do not match.';msg.className='auth-msg err';markErr('np-pass2');return;}
+  btn.disabled=true;btn.textContent='Updating…';
+  const h=await hashPass(p1);
+  const us=Auth.all(),i=us.findIndex(u=>u.email===fpEmail);
+  if(i>=0){us[i].pass=h;localStorage.setItem('tfp_u',JSON.stringify(us));}
+  msg.textContent='✓ Password updated! Redirecting to login…';msg.className='auth-msg ok';
+  fpEmail='';fpOTP='';
+  setTimeout(()=>{closeAuth();openAuth('li');},1500);
+  btn.disabled=false;btn.textContent='Update Password →';
 }
 function updateNav(){
   const u=Auth.me();
   const nr=$('nav-right');
   if(u){
-    nr.innerHTML=`<div class="nav-user"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="nav-name">${u.name.split(' ')[0]}</span><button class="btn-ghost" style="font-size:12px;padding:6px 12px" onclick="Auth.logout();updateNav()">Log Out</button></div>`;
+    nr.innerHTML=`<div class="nav-user"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="nav-name">${u.name.split(' ')[0]}</span><a href="/app" class="btn-nav-cta" style="text-decoration:none;font-size:13px;padding:8px 16px;">Open App →</a></div>`;
   } else {
     nr.innerHTML=`<button class="btn-ghost" onclick="openAuth('li')">Log In</button><button class="btn-nav-cta" onclick="openAuth('su')">Sign Up Free</button>`;
   }
@@ -1016,6 +1174,28 @@ function updateWPM(){
 // ── INIT ──
 buildProgGrid();
 updateNav();
+// If already logged in, show 'Open App' in hero CTAs
+(function(){
+  const u=Auth.me();
+  if(u){
+    // Don't auto-redirect — let them browse the marketing page
+    // But show "Open App" as primary hero button
+    const heroBtns=document.querySelector('.hero-btns');
+    if(heroBtns){
+      heroBtns.innerHTML=`<a href="/app" class="btn-primary" style="text-decoration:none;">Open My Workspace →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
+    }
+  }
+})();
+// Handle ?openAuth= URL param (from pricing page redirect when not logged in)
+(function(){
+  const params=new URLSearchParams(window.location.search);
+  const tab=params.get('openAuth');
+  if(tab==='su'||tab==='li'){
+    setTimeout(()=>openAuth(tab),300);
+    // Clean URL
+    history.replaceState({},'','/');
+  }
+})();
 </script>
 </body>
 </html>
