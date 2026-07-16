@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Pricing — TypeFromPDF</title>
+<meta name="description" content="Simple, transparent pricing. Start free, no credit card required. Upgrade when you need unlimited PDFs and all 18 coding languages."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#03030d;--bg2:#08081c;--bg3:#0c0c22;--bg4:#111128;
+  --border:#1a1a3a;--border2:#252550;--border3:#353568;
+  --text:#f0f0ff;--text2:#7070a8;--text3:#36365a;
+  --accent:#7c6dfa;--accent2:#9d91fb;--accent3:#bfb8ff;
+  --accent-bg:rgba(124,109,250,.08);--accent-glow:rgba(124,109,250,.28);
+  --green:#00d2a0;--green-bg:rgba(0,210,160,.08);--green-border:rgba(0,210,160,.2);
+  --red:#ff6b6b;--gold:#ffd93d;--gold-bg:rgba(255,217,61,.08);
+  --grad:linear-gradient(135deg,#6c5ce7 0%,#7c6dfa 50%,#a29bfe 100%);
+  --r8:8px;--r12:12px;--r16:16px;--r20:20px;--r24:24px;--rpill:100px;
+  --transition:all .2s cubic-bezier(.4,0,.2,1);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{font-family:'Inter',sans-serif;cursor:pointer;}
+.gr{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+nav{
+  position:sticky;top:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;background:rgba(3,3,13,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+}
+.nav-logo{font-size:17px;font-weight:900;letter-spacing:-.8px;}
+.nav-links{display:flex;align-items:center;gap:1.75rem;}
+.nav-links a{font-size:13.5px;font-weight:500;color:var(--text2);transition:var(--transition);}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+.nav-right{display:flex;gap:8px;}
+.btn-ghost{padding:8px 18px;border-radius:var(--r8);font-size:13px;font-weight:600;border:1px solid var(--border2);background:transparent;color:var(--text2);transition:var(--transition);}
+.btn-ghost:hover{color:var(--text);background:var(--bg3);}
+.btn-cta{padding:8px 18px;border-radius:var(--r8);font-size:13px;font-weight:700;border:none;background:var(--grad);color:#fff;transition:var(--transition);}
+.btn-cta:hover{opacity:.88;}
+
+.page-hero{padding:5.5rem 2rem 3rem;text-align:center;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:650px;height:650px;background:rgba(124,109,250,.07);border-radius:50%;filter:blur(100px);pointer-events:none;}
+.section-label{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent2);margin-bottom:.75rem;}
+.page-hero h1{font-size:clamp(2rem,4vw,3.2rem);font-weight:900;letter-spacing:-2px;line-height:1.1;margin-bottom:1rem;position:relative;z-index:1;}
+.page-hero p{font-size:17px;color:var(--text2);max-width:500px;margin:0 auto 2rem;line-height:1.8;position:relative;z-index:1;}
+.guarantee-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-bg);border:1px solid var(--green-border);color:var(--green);font-size:13px;font-weight:700;padding:8px 18px;border-radius:var(--rpill);position:relative;z-index:1;}
+
+/* PLANS */
+.plans-section{max-width:1000px;margin:0 auto;padding:2rem 2rem 0;}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;align-items:start;}
+@media(max-width:760px){.plans-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto;}}
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r24);padding:2.25rem;position:relative;transition:var(--transition);}
+.plan:hover{transform:translateY(-4px);border-color:var(--border2);}
+.plan.popular{border-color:var(--accent);box-shadow:0 0 50px rgba(124,109,250,.15);}
+.plan-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:11px;font-weight:800;padding:4px 16px;border-radius:var(--rpill);white-space:nowrap;box-shadow:0 4px 16px var(--accent-glow);}
+.plan-tier{font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:.6rem;}
+.plan-price{font-size:3rem;font-weight:900;letter-spacing:-2.5px;line-height:1;margin-bottom:.2rem;}
+.plan-period{font-size:14px;font-weight:400;color:var(--text2);letter-spacing:0;}
+.plan-billed{font-size:12.5px;color:var(--text3);margin-bottom:.25rem;font-weight:500;}
+.plan-save{font-size:12.5px;color:var(--green);font-weight:700;margin-bottom:1.5rem;}
+.plan-desc{font-size:13.5px;color:var(--text2);margin-bottom:1.5rem;line-height:1.65;min-height:52px;}
+.plan-cta{width:100%;padding:13px;border-radius:var(--r12);font-size:14px;font-weight:700;transition:var(--transition);margin-bottom:1.75rem;}
+.plan-cta.outline{background:transparent;border:1px solid var(--border2);color:var(--text);}
+.plan-cta.outline:hover{border-color:var(--border3);}
+.plan-cta.filled{background:var(--grad);color:#fff;border:none;box-shadow:0 4px 20px var(--accent-glow);}
+.plan-cta.filled:hover{opacity:.88;transform:translateY(-1px);}
+.plan-features{list-style:none;}
+.plan-features li{font-size:13.5px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;line-height:1.5;}
+.plan-features li:last-child{border-bottom:none;}
+.check{font-size:11px;font-weight:800;color:var(--green);flex-shrink:0;margin-top:2px;}
+.cross{font-size:11px;color:var(--text3);flex-shrink:0;margin-top:2px;}
+
+/* COMPARE TABLE */
+.compare-section{max-width:900px;margin:4.5rem auto 0;padding:0 2rem;}
+.compare-section h2{font-size:1.5rem;font-weight:900;letter-spacing:-.6px;margin-bottom:.4rem;}
+.compare-section .sub{font-size:14px;color:var(--text2);margin-bottom:2rem;}
+.compare-table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:var(--r16);border:1px solid var(--border);}
+.compare-table thead th{background:var(--bg3);padding:1rem 1.25rem;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);text-align:center;}
+.compare-table thead th:first-child{text-align:left;width:42%;}
+.compare-table thead th.hi{color:var(--accent3);}
+.compare-table tbody tr{border-top:1px solid var(--border);}
+.compare-table tbody tr:hover{background:var(--bg3);}
+.compare-table td{padding:.9rem 1.25rem;font-size:13.5px;color:var(--text2);text-align:center;vertical-align:middle;}
+.compare-table td:first-child{color:var(--text);font-weight:500;text-align:left;}
+.cat-row td{background:var(--bg3);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:.6rem 1.25rem;}
+.t-yes{color:var(--green);font-weight:800;font-size:16px;}
+.t-no{color:var(--text3);}
+
+/* FAQ */
+.faq-section{max-width:720px;margin:4.5rem auto 0;padding:0 2rem 5rem;}
+.faq-section h2{font-size:1.5rem;font-weight:900;letter-spacing:-.5px;margin-bottom:.4rem;}
+.faq-section .sub{font-size:14px;color:var(--text2);margin-bottom:2rem;}
+.faq-item{border:1px solid var(--border);border-radius:var(--r12);overflow:hidden;margin-bottom:.6rem;transition:var(--transition);}
+.faq-item.open{border-color:var(--border2);}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.5rem;background:var(--bg2);border:none;color:var(--text);font-size:14px;font-weight:600;text-align:left;transition:var(--transition);gap:1rem;}
+.faq-q:hover{background:var(--bg3);}
+.faq-arr{color:var(--text3);font-size:13px;flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-arr{transform:rotate(90deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
+.faq-a-inner{padding:.25rem 1.5rem 1.25rem;font-size:14px;color:var(--text2);line-height:1.8;}
+.faq-a-inner a{color:var(--accent3);font-weight:600;}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2rem;}
+.footer-inner{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-size:16px;font-weight:900;letter-spacing:-.5px;}
+.footer-links{display:flex;gap:1.25rem;flex-wrap:wrap;}
+.footer-links a{font-size:13px;color:var(--text3);transition:var(--transition);}
+.footer-links a:hover{color:var(--text2);}
+.footer-copy{font-size:12.5px;color:var(--text3);width:100%;text-align:center;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);}
+
+@media(max-width:700px){
+  nav{padding:0 1rem;}
+  .nav-links{display:none;}
+  .plans-section,.compare-section,.faq-section{padding-left:1.25rem;padding-right:1.25rem;}
+  .compare-table thead th:nth-child(2){display:none;}
+  .compare-table td:nth-child(2){display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- EARLY ACCESS MODAL -->
+<div id="early-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:900;align-items:center;justify-content:center;padding:1rem;display:none" onclick="if(event.target===this)closeEarly()">
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:2rem;width:100%;max-width:420px;position:relative;box-shadow:0 16px 64px rgba(0,0,0,.6)">
+    <button onclick="closeEarly()" style="position:absolute;top:1rem;right:1rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:14px;padding:6px 9px;cursor:pointer">✕</button>
+    <div id="early-body">
+      <div style="font-size:38px;margin-bottom:.6rem">🚀</div>
+      <div id="early-plan-label" style="display:inline-flex;align-items:center;gap:6px;background:rgba(124,109,250,.08);border:1px solid rgba(124,109,250,.25);color:#bfb8ff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:100px;margin-bottom:1.1rem;letter-spacing:.3px">✦ Premium Plan</div>
+      <h2 style="font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:.4rem">Get Early Access</h2>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:1.5rem">Payments are launching very soon. Enter your email and <strong style="color:var(--text)">you'll be the first to know</strong> — plus get an early-bird offer when we go live.</p>
+      <div style="margin-bottom:.9rem"><label style="display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:.4rem;letter-spacing:.8px;text-transform:uppercase">Your Email</label><input id="early-email" type="email" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:14px;outline:none;font-family:Inter,sans-serif" onkeydown="if(event.key==='Enter')submitEarly()"/></div>
+      <button onclick="submitEarly()" style="width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,#6c5ce7,#7c6dfa,#a29bfe);color:#fff;font-size:14.5px;font-weight:700;border:none;cursor:pointer;font-family:Inter,sans-serif">Notify Me When It's Live →</button>
+      <div id="early-msg" style="font-size:12.5px;text-align:center;margin-top:.6rem;min-height:18px;font-weight:500"></div>
+    </div>
+    <div id="early-success" style="text-align:center;padding:1.5rem 0;display:none">
+      <div style="font-size:42px;margin-bottom:.75rem">✅</div>
+      <h3 style="font-size:17px;font-weight:800;margin-bottom:.4rem">You're on the list!</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.7">We'll email <strong id="early-email-confirm" style="color:var(--text)"></strong> the moment payments go live — with an early-bird discount just for waiting.</p>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <a href="typefrompdf.html" class="nav-logo">Type<span class="gr">FromPDF</span></a>
+  <div class="nav-links">
+    <a href="typefrompdf.html#features">Features</a>
+    <a href="typefrompdf.html#app">Try It</a>
+    <a href="pricing.html" class="active">Pricing</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a href="typefrompdf.html" class="btn-ghost">← Back to App</a>
+    <a href="typefrompdf.html#app" class="btn-cta">Start Free</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="section-label">Pricing</div>
+  <h1>Simple, honest <span class="gr">pricing</span></h1>
+  <p>Start free today. No credit card required. Upgrade whenever you're ready for unlimited access.</p>
+  <div class="guarantee-badge">✓ 48-hour money-back guarantee on all paid plans</div>
+</div>
+
+<div class="plans-section">
+  <div class="plans-grid">
+
+    <!-- FREE -->
+    <div class="plan">
+      <div class="plan-tier">Free</div>
+      <div class="plan-price">$0 <span class="plan-period">/ forever</span></div>
+      <div class="plan-billed">&nbsp;</div>
+      <div class="plan-save">&nbsp;</div>
+      <div class="plan-desc">Everything you need to get started. No credit card, no expiry date.</div>
+      <button class="plan-cta outline" onclick="window.location.href='typefrompdf.html#app'">Start for Free →</button>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> 3 PDF uploads per month</li>
+        <li><span class="check">✓</span> 5 coding languages (Python, JS, HTML, CSS, Java)</li>
+        <li><span class="check">✓</span> Paste your own code</li>
+        <li><span class="check">✓</span> Real-time WPM &amp; accuracy tracking</li>
+        <li><span class="check">✓</span> Multi-page PDF navigation</li>
+        <li><span class="check">✓</span> 100% in-browser — your data stays yours</li>
+        <li><span class="cross">–</span> Upload code files</li>
+        <li><span class="cross">–</span> 13 advanced coding languages</li>
+      </ul>
+    </div>
+
+    <!-- MONTHLY -->
+    <div class="plan">
+      <div class="plan-tier">Monthly</div>
+      <div class="plan-price">$17 <span class="plan-period">/ month</span></div>
+      <div class="plan-billed">Billed monthly · Cancel anytime</div>
+      <div class="plan-save">&nbsp;</div>
+      <div class="plan-desc">Full access every month, with the flexibility to cancel at any time.</div>
+      <button class="plan-cta outline" onclick="openEarlyPricing(this)">Get Monthly →</button>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Unlimited PDF uploads</li>
+        <li><span class="check">✓</span> All 18 coding languages</li>
+        <li><span class="check">✓</span> Upload your own code files</li>
+        <li><span class="check">✓</span> Paste your own code</li>
+        <li><span class="check">✓</span> Real-time WPM &amp; accuracy tracking</li>
+        <li><span class="check">✓</span> Multi-page PDF navigation</li>
+        <li><span class="check">✓</span> Priority email support</li>
+        <li><span class="check">✓</span> Early access to new features</li>
+      </ul>
+    </div>
+
+    <!-- YEARLY — POPULAR -->
+    <div class="plan popular">
+      <div class="plan-badge">🔥 Most Popular</div>
+      <div class="plan-tier">Yearly</div>
+      <div class="plan-price">$180 <span class="plan-period">/ year</span></div>
+      <div class="plan-billed">Billed as $180/year</div>
+      <div class="plan-save">Only $15/mo — you save $24 per year</div>
+      <div class="plan-desc">Best value. Everything in Monthly, at $15/month when you pay annually.</div>
+      <button class="plan-cta filled" onclick="openEarlyPricing(this)">Get Yearly — Best Value</button>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Unlimited PDF uploads</li>
+        <li><span class="check">✓</span> All 18 coding languages</li>
+        <li><span class="check">✓</span> Upload your own code files</li>
+        <li><span class="check">✓</span> Paste your own code</li>
+        <li><span class="check">✓</span> Real-time WPM &amp; accuracy tracking</li>
+        <li><span class="check">✓</span> Multi-page PDF navigation</li>
+        <li><span class="check">✓</span> Priority email support</li>
+        <li><span class="check">✓</span> Early access to new features</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE TABLE -->
+<div class="compare-section">
+  <div class="section-label" style="margin-bottom:.75rem">Compare Plans</div>
+  <h2>Full feature breakdown</h2>
+  <p class="sub">Everything included, nothing hidden.</p>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Free</th>
+        <th>Monthly</th>
+        <th class="hi">Yearly</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="cat-row"><td colspan="4">PDF Typing</td></tr>
+      <tr><td>PDF uploads per month</td><td>3</td><td><span class="t-yes">∞</span></td><td><span class="t-yes">∞</span></td></tr>
+      <tr><td>Multi-page PDF navigation</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>In-browser only — never uploaded</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+
+      <tr class="cat-row"><td colspan="4">Code Mode</td></tr>
+      <tr><td>Free coding languages (5)</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>All 18 coding languages</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Upload your own code files</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Paste your own code</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+
+      <tr class="cat-row"><td colspan="4">Tracking &amp; Stats</td></tr>
+      <tr><td>Real-time WPM</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Real-time accuracy</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Progress tracking per session</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+
+      <tr class="cat-row"><td colspan="4">Support &amp; Access</td></tr>
+      <tr><td>Community support</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Priority email support</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Early access to new features</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>48-hour money-back guarantee</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="section-label" style="margin-bottom:.75rem">FAQ</div>
+  <h2>Common questions</h2>
+  <p class="sub">Still have a question? <a href="contact.html">Email us</a> — we respond within 24–48 hours.</p>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Can I cancel my subscription at any time? <span class="faq-arr">›</span></button>
+    <div class="faq-a"><div class="faq-a-inner">Yes. You can cancel anytime by emailing us at <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a>. We'll cancel your subscription immediately with no questions asked. If you're within 48 hours of your original purchase, you're eligible for a full refund.</div></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Is there a money-back guarantee? <span class="faq-arr">›</span></button>
+    <div class="faq-a"><div class="faq-a-inner">Yes. All paid plans include a 48-hour money-back guarantee. If you're not satisfied for any reason within the first 48 hours of your subscription, email us and we'll issue a full refund. No forms, no runaround.</div></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">What happens to my files if I don't upgrade? <span class="faq-arr">›</span></button>
+    <div class="faq-a"><div class="faq-a-inner">Nothing happens to your files — because we never store them. PDFs are processed entirely in your browser and are gone the moment you close the tab. There are no files on our servers to worry about.</div></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept? <span class="faq-arr">›</span></button>
+    <div class="faq-a"><div class="faq-a-inner">We accept all major credit and debit cards (Visa, Mastercard, American Express) and PayPal. Payments are processed by Lemon Squeezy, a trusted merchant that handles all international taxes and compliance automatically.</div></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Is the price the same in all countries? <span class="faq-arr">›</span></button>
+    <div class="faq-a"><div class="faq-a-inner">Yes. TypeFromPDF uses a single global price in USD. Lemon Squeezy, our payment processor, handles currency conversion and any local taxes (such as VAT/GST) where required. The price you see is the price you pay.</div></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Can I switch between Monthly and Yearly? <span class="faq-arr">›</span></button>
+    <div class="faq-a"><div class="faq-a-inner">Yes. Email us and we'll help you switch plans. If you're upgrading from Monthly to Yearly mid-cycle, we'll prorate the difference so you only pay for what you haven't used.</div></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">What are the 5 free coding languages? <span class="faq-arr">›</span></button>
+    <div class="faq-a"><div class="faq-a-inner">The 5 free languages are Python, JavaScript, HTML, CSS, and Java. Upgrading to any paid plan unlocks all 18 languages: TypeScript, C, C++, C#, Go, Rust, PHP, Ruby, Swift, Kotlin, SQL, Dart, and R — plus the ability to upload your own code files.</div></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Type<span class="gr">FromPDF</span></div>
+    <div class="footer-links">
+      <a href="typefrompdf.html">Home</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="cookies.html">Cookies</a>
+    </div>
+    <p class="footer-copy">© 2026 TypeFromPDF. All rights reserved. Payments processed by Lemon Squeezy.</p>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  const a=item.querySelector('.faq-a');
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el=>{el.classList.remove('open');el.querySelector('.faq-a').style.maxHeight='0';});
+  if(!isOpen){item.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}
+}
+function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+function openEarlyPricing(btn){
+  const plan=btn.closest('.plan').querySelector('.plan-tier').textContent.trim()+' Plan';
+  openEarly(plan);
+}
+function openEarly(plan){
+  document.getElementById('early-plan-label').textContent='✦ '+plan;
+  document.getElementById('early-body').style.display='block';
+  document.getElementById('early-success').style.display='none';
+  document.getElementById('early-email').value='';
+  document.getElementById('early-msg').textContent='';
+  document.getElementById('early-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('early-email').focus(),80);
+}
+function closeEarly(){document.getElementById('early-modal').style.display='none';}
+function submitEarly(){
+  const email=document.getElementById('early-email').value.trim();
+  const msg=document.getElementById('early-msg');
+  if(!validEmail(email)){msg.textContent='Please enter a valid email.';msg.className='auth-msg err';return;}
+  const waitlist=JSON.parse(localStorage.getItem('tfp_waitlist')||'[]');
+  if(!waitlist.includes(email))waitlist.push(email);
+  localStorage.setItem('tfp_waitlist',JSON.stringify(waitlist));
+  document.getElementById('early-email-confirm').textContent=email;
+  document.getElementById('early-body').style.display='none';
+  document.getElementById('early-success').style.display='block';
+  setTimeout(()=>closeEarly(),4000);
+}
+</script>
+</body>
+</html>

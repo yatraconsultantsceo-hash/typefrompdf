@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>About Us — TypeFromPDF</title>
+<meta name="description" content="TypeFromPDF is the only typing practice tool that works with your own PDFs and code. Learn why we built it and what drives us."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#03030d;--bg2:#08081c;--bg3:#0c0c22;--bg4:#111128;
+  --border:#1a1a3a;--border2:#252550;--border3:#353568;
+  --text:#f0f0ff;--text2:#7070a8;--text3:#36365a;
+  --accent:#7c6dfa;--accent2:#9d91fb;--accent3:#bfb8ff;
+  --accent-bg:rgba(124,109,250,.08);--accent-glow:rgba(124,109,250,.28);
+  --green:#00d2a0;--green-bg:rgba(0,210,160,.08);--green-border:rgba(0,210,160,.2);
+  --grad:linear-gradient(135deg,#6c5ce7 0%,#7c6dfa 50%,#a29bfe 100%);
+  --r8:8px;--r12:12px;--r16:16px;--r20:20px;--r24:24px;--rpill:100px;
+  --transition:all .2s cubic-bezier(.4,0,.2,1);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{font-family:'Inter',sans-serif;cursor:pointer;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.gr{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+nav{
+  position:sticky;top:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;background:rgba(3,3,13,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-size:17px;font-weight:900;letter-spacing:-.8px;}
+.nav-links{display:flex;align-items:center;gap:1.75rem;}
+.nav-links a{font-size:13.5px;font-weight:500;color:var(--text2);transition:var(--transition);}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+.nav-right{display:flex;gap:8px;}
+.btn-ghost{padding:8px 18px;border-radius:var(--r8);font-size:13px;font-weight:600;border:1px solid var(--border2);background:transparent;color:var(--text2);transition:var(--transition);}
+.btn-ghost:hover{color:var(--text);background:var(--bg3);}
+.btn-cta{padding:8px 18px;border-radius:var(--r8);font-size:13px;font-weight:700;border:none;background:var(--grad);color:#fff;transition:var(--transition);}
+.btn-cta:hover{opacity:.88;}
+
+/* HERO */
+.page-hero{padding:6rem 2rem 5rem;text-align:center;position:relative;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;}
+.orb1{width:600px;height:600px;background:rgba(108,92,231,.09);top:-200px;left:50%;transform:translateX(-50%);}
+.orb2{width:400px;height:400px;background:rgba(0,210,160,.05);bottom:-100px;right:-100px;}
+.section-label{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent2);margin-bottom:.75rem;}
+.page-hero h1{font-size:clamp(2rem,4.5vw,3.4rem);font-weight:900;letter-spacing:-2px;line-height:1.1;margin-bottom:1.25rem;position:relative;z-index:1;}
+.page-hero .lead{font-size:18px;color:var(--text2);max-width:600px;margin:0 auto;line-height:1.8;position:relative;z-index:1;}
+
+/* CONTENT */
+.content-wrap{max-width:780px;margin:0 auto;padding:1rem 2rem 5rem;}
+
+.story-section{margin-bottom:4rem;}
+.story-section h2{font-size:1.65rem;font-weight:900;letter-spacing:-.8px;margin-bottom:1.25rem;line-height:1.2;}
+.story-section p{font-size:15.5px;color:var(--text2);line-height:1.9;margin-bottom:1.1rem;}
+.story-section p:last-child{margin-bottom:0;}
+.story-section strong{color:var(--text);font-weight:700;}
+
+.divider{height:1px;background:var(--border);margin:3.5rem 0;}
+
+/* MISSION CARD */
+.mission-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r24);padding:2.75rem;position:relative;overflow:hidden;margin-bottom:4rem;}
+.mission-card::after{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;background:rgba(124,109,250,.07);border-radius:50%;filter:blur(60px);pointer-events:none;}
+.mission-card .section-label{margin-bottom:.75rem;}
+.mission-card h2{font-size:1.5rem;font-weight:900;letter-spacing:-.6px;margin-bottom:1.1rem;}
+.mission-card p{font-size:15px;color:var(--text2);line-height:1.9;position:relative;z-index:1;}
+
+/* VALUES */
+.values-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;margin-bottom:4rem;}
+.value-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r16);padding:1.75rem;transition:var(--transition);}
+.value-card:hover{border-color:var(--border2);transform:translateY(-3px);}
+.value-icon{font-size:26px;margin-bottom:.9rem;display:block;}
+.value-card h3{font-size:14.5px;font-weight:700;margin-bottom:.4rem;}
+.value-card p{font-size:13.5px;color:var(--text2);line-height:1.7;}
+
+/* TECH */
+.tech-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r24);padding:2.5rem;margin-bottom:4rem;}
+.tech-section h2{font-size:1.35rem;font-weight:900;letter-spacing:-.5px;margin-bottom:1.1rem;}
+.tech-list{list-style:none;}
+.tech-list li{display:flex;gap:12px;align-items:flex-start;padding:.75rem 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.7;}
+.tech-list li:last-child{border-bottom:none;}
+.tech-list li::before{content:'✦';color:var(--accent2);font-size:10px;flex-shrink:0;margin-top:4px;}
+.tech-list strong{color:var(--text);font-weight:700;}
+.tech-list span{color:var(--text2);}
+
+/* FOUNDER */
+.founder-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r24);padding:2.5rem;margin-bottom:4rem;position:relative;overflow:hidden;}
+.founder-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);}
+.founder-top{display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;}
+.founder-avatar{width:58px;height:58px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0;box-shadow:0 0 24px var(--accent-glow);}
+.founder-meta h3{font-size:17px;font-weight:800;margin-bottom:.1rem;}
+.founder-meta p{font-size:13px;color:var(--text2);}
+.founder-note{font-size:15px;color:var(--text2);line-height:1.9;font-style:italic;}
+.founder-note::before{content:'"';font-size:3rem;color:var(--accent3);opacity:.3;display:block;line-height:1;margin-bottom:.25rem;font-style:normal;}
+
+/* CTA */
+.about-cta{text-align:center;padding:3rem 2rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r24);margin-bottom:2rem;}
+.about-cta h2{font-size:1.6rem;font-weight:900;letter-spacing:-.6px;margin-bottom:.6rem;}
+.about-cta p{font-size:15px;color:var(--text2);margin-bottom:1.75rem;line-height:1.75;}
+.cta-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:var(--grad);color:#fff;padding:13px 32px;border-radius:var(--r12);font-size:14.5px;font-weight:700;border:none;transition:var(--transition);box-shadow:0 4px 20px var(--accent-glow);}
+.btn-primary:hover{opacity:.88;transform:translateY(-2px);}
+.btn-outline{background:transparent;color:var(--text);padding:13px 32px;border-radius:var(--r12);font-size:14.5px;font-weight:600;border:1px solid var(--border2);transition:var(--transition);}
+.btn-outline:hover{border-color:var(--border3);background:var(--bg3);}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2rem;}
+.footer-inner{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-size:16px;font-weight:900;letter-spacing:-.5px;}
+.footer-links{display:flex;gap:1.25rem;flex-wrap:wrap;}
+.footer-links a{font-size:13px;color:var(--text3);transition:var(--transition);}
+.footer-links a:hover{color:var(--text2);}
+.footer-copy{font-size:12.5px;color:var(--text3);width:100%;text-align:center;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);}
+
+@media(max-width:700px){
+  nav{padding:0 1rem;}
+  .nav-links{display:none;}
+  .page-hero{padding:4.5rem 1.25rem 3.5rem;}
+  .content-wrap{padding-left:1.25rem;padding-right:1.25rem;}
+  .cta-btns{flex-direction:column;align-items:center;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="typefrompdf.html" class="nav-logo">Type<span class="gr">FromPDF</span></a>
+  <div class="nav-links">
+    <a href="typefrompdf.html#features">Features</a>
+    <a href="typefrompdf.html#app">Try It</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="about.html" class="active">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a href="typefrompdf.html" class="btn-ghost">← Back to App</a>
+    <a href="typefrompdf.html#app" class="btn-cta">Start Typing Free</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="section-label">About TypeFromPDF</div>
+  <h1>Built to make <span class="gr">practice meaningful</span></h1>
+  <p class="lead">We created the only typing practice tool that works with content you already care about — your own PDFs, notes, and code.</p>
+</div>
+
+<div class="content-wrap">
+
+  <!-- MISSION -->
+  <div class="mission-card">
+    <div class="section-label">Our Mission</div>
+    <h2>Practice with purpose, not with noise</h2>
+    <p>Typing practice has been broken for a long time. Every tool gives you the same random sentences about foxes jumping over dogs or pangrams that have nothing to do with your life. You build typing speed, but not knowledge. You practice, but you don't learn anything you'll actually use.</p>
+    <p>TypeFromPDF fixes that. Upload any PDF — your study notes, a textbook chapter, a legal document, a research paper — and type over the ghost text. You build real typing speed <em>and</em> genuinely absorb the content at the same time. Two goals, one practice session.</p>
+  </div>
+
+  <!-- STORY -->
+  <div class="story-section">
+    <div class="section-label">The Story</div>
+    <h2>Why we built this</h2>
+    <p>The idea behind TypeFromPDF came from a simple observation: the best way to remember something is to actively produce it, not just passively read it. Cognitive science has known this for decades — it's called the <strong>production effect</strong>. Typing out words forces your brain to engage more deeply than simply reading them. Memory retention dramatically improves when you have to reproduce information.</p>
+    <p>So why are all typing practice tools giving us sentences we don't care about? Why not let people practice with their own material and actually learn while they type?</p>
+    <p>That question became TypeFromPDF. A tool that respects your time and your intelligence — that helps you build speed with content that actually matters to you, whether that's a chapter of a textbook you're studying, a paper you need to memorize, or code you're trying to internalize.</p>
+    <p>We also built TypeFromPDF for developers and programmers. Learning a new programming language means reading a lot of syntax. What if you could practice typing real, working code in Python, Go, Rust, TypeScript, and 14 other languages? Not toy examples — actual patterns you'll write on the job.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- VALUES -->
+  <div class="section-label" style="margin-bottom:1.25rem">What We Stand For</div>
+  <div class="values-grid">
+    <div class="value-card">
+      <span class="value-icon">🔒</span>
+      <h3>Privacy by design</h3>
+      <p>Your PDFs are processed entirely in your browser. They never touch our servers. This isn't a promise — it's an architectural fact.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-icon">⚡</span>
+      <h3>Performance first</h3>
+      <p>A typing tool that lags is useless. TypeFromPDF is built to be fast and responsive with zero dependencies blocking your first keystroke.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-icon">🚫</span>
+      <h3>No ads, ever</h3>
+      <p>We're not in the attention economy. TypeFromPDF is a tool, not a platform. We make money from subscriptions, not from selling your attention.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-icon">🎯</span>
+      <h3>Honest pricing</h3>
+      <p>No tricks, no bait-and-switch, no dark patterns. A free tier that's genuinely useful, and a paid tier that's worth every dollar.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-icon">📐</span>
+      <h3>Thoughtful design</h3>
+      <p>Every screen, button, and interaction is designed to get out of your way. The goal is flow — you should forget you're using an app at all.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-icon">🤝</span>
+      <h3>Real support</h3>
+      <p>We read every message ourselves. No bots, no ticket queues. If you email us, a real person replies — typically within 24 hours.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TECH -->
+  <div class="tech-section">
+    <div class="section-label" style="margin-bottom:.75rem">Technology</div>
+    <h2>How it actually works</h2>
+    <ul class="tech-list">
+      <li><div><strong>In-browser PDF parsing</strong> — <span>We use PDF.js, a Mozilla-built JavaScript library, to extract text from your PDF completely client-side. Your file is read by your own browser — it never leaves your device.</span></div></li>
+      <li><div><strong>Ghost text overlay</strong> — <span>Your PDF's text appears as faded background content. As you type, a transparent overlay tracks your accuracy character by character, highlighting correct characters and marking errors in real time.</span></div></li>
+      <li><div><strong>Live WPM calculation</strong> — <span>Words per minute and accuracy are computed continuously as you type. The WPM calculation uses a standard 5-character word definition and updates every 500 milliseconds so you see smooth, accurate numbers.</span></div></li>
+      <li><div><strong>18 programming languages</strong> — <span>Each language includes carefully written, real-world code samples — not toy Hello World programs. The samples demonstrate practical patterns like data structures, async code, type systems, and algorithms.</span></div></li>
+      <li><div><strong>Zero tracking</strong> — <span>There are no analytics cookies, no advertising pixels, no tracking scripts. The only data stored locally is your account information and PDF usage count in your own browser's localStorage.</span></div></li>
+    </ul>
+  </div>
+
+  <!-- FOUNDER -->
+  <div class="founder-card">
+    <div class="founder-top">
+      <div class="founder-avatar">B</div>
+      <div class="founder-meta">
+        <h3>Balakumar S</h3>
+        <p>Founder, TypeFromPDF · India</p>
+      </div>
+    </div>
+    <div class="founder-note">
+      I built TypeFromPDF because I was tired of practicing typing with sentences that meant nothing to me. I wanted to type over my own study notes, my own code, my own documents — and actually retain something at the end of a session. The idea was simple, but nobody had built it. So I did. TypeFromPDF is my attempt to make practice purposeful — to make the time you spend improving your typing speed actually count for something beyond speed alone.
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="about-cta">
+    <h2>Try it yourself — <span class="gr">free</span></h2>
+    <p>No account required to start. Upload a PDF or pick a coding language and experience it in 30 seconds.</p>
+    <div class="cta-btns">
+      <a href="typefrompdf.html#app" class="btn-primary">Start Typing Free →</a>
+      <a href="contact.html" class="btn-outline">Get in Touch</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Type<span class="gr">FromPDF</span></div>
+    <div class="footer-links">
+      <a href="typefrompdf.html">Home</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="cookies.html">Cookies</a>
+    </div>
+    <p class="footer-copy">© 2026 TypeFromPDF. Built for learners and builders everywhere.</p>
+  </div>
+</footer>
+
+</body>
+</html>

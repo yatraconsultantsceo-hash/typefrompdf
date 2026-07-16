@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Cookie Policy — TypeFromPDF</title>
+<meta name="description" content="TypeFromPDF uses no advertising cookies, no tracking pixels. We only use essential browser storage to run your account."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#03030d;--bg2:#08081c;--bg3:#0c0c22;
+  --border:#1a1a3a;--border2:#252550;
+  --text:#f0f0ff;--text2:#7070a8;--text3:#36365a;
+  --accent:#7c6dfa;--accent2:#9d91fb;--accent3:#bfb8ff;
+  --green:#00d2a0;--green-bg:rgba(0,210,160,.08);--green-border:rgba(0,210,160,.2);
+  --red:#ff6b6b;--red-bg:rgba(255,107,107,.07);--red-border:rgba(255,107,107,.2);
+  --grad:linear-gradient(135deg,#6c5ce7 0%,#7c6dfa 50%,#a29bfe 100%);
+  --r8:8px;--r12:12px;--r16:16px;--r24:24px;
+  --transition:all .2s cubic-bezier(.4,0,.2,1);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+a{color:var(--accent3);text-decoration:none;transition:var(--transition);}
+a:hover{color:var(--accent2);}
+.gr{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+nav{position:sticky;top:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(3,3,13,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-size:17px;font-weight:900;letter-spacing:-.8px;text-decoration:none;color:var(--text);}
+.nav-links{display:flex;align-items:center;gap:1.75rem;}
+.nav-links a{font-size:13.5px;font-weight:500;color:var(--text2);}
+.nav-links a:hover{color:var(--text);}
+.btn-back{padding:8px 18px;border-radius:var(--r8);font-size:13px;font-weight:600;border:1px solid var(--border2);background:transparent;color:var(--text2);text-decoration:none;transition:var(--transition);}
+.btn-back:hover{color:var(--text);background:var(--bg3);}
+.page-hero{padding:4rem 2rem 3rem;max-width:820px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent2);margin-bottom:.75rem;}
+.page-hero h1{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;letter-spacing:-1.5px;margin-bottom:.6rem;}
+.page-hero .meta{font-size:13px;color:var(--text3);}
+.content{max-width:820px;margin:0 auto;padding:0 2rem 5rem;}
+.status-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2.5rem;}
+@media(max-width:480px){.status-cards{grid-template-columns:1fr;}}
+.status-card{border-radius:var(--r12);padding:1.25rem;display:flex;gap:12px;align-items:flex-start;}
+.status-card.yes{background:var(--green-bg);border:1px solid var(--green-border);}
+.status-card.no{background:var(--red-bg);border:1px solid var(--red-border);}
+.sc-icon{font-size:20px;flex-shrink:0;}
+.sc-body h4{font-size:13.5px;font-weight:700;margin-bottom:.2rem;}
+.status-card.yes h4{color:var(--green);}
+.status-card.no h4{color:var(--red);}
+.sc-body p{font-size:13px;color:var(--text2);line-height:1.6;}
+section.legal{margin-bottom:2.75rem;}
+section.legal h2{font-size:17px;font-weight:800;color:var(--text);margin-bottom:.9rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);display:flex;gap:.6rem;align-items:center;}
+.sec-num{font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--text3);background:var(--bg3);padding:3px 8px;border-radius:6px;}
+section.legal p{font-size:14.5px;color:var(--text2);line-height:1.9;margin-bottom:.75rem;}
+section.legal p:last-child{margin-bottom:0;}
+section.legal ul{list-style:none;margin:.5rem 0;}
+section.legal ul li{font-size:14.5px;color:var(--text2);line-height:1.85;padding:.3rem 0;padding-left:1.25rem;position:relative;}
+section.legal ul li::before{content:'·';position:absolute;left:0;color:var(--text3);}
+section.legal strong{color:var(--text);font-weight:600;}
+.cookie-table{width:100%;border-collapse:collapse;border-radius:var(--r12);overflow:hidden;border:1px solid var(--border);margin:.75rem 0;}
+.cookie-table th{background:var(--bg3);padding:.8rem 1.1rem;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);text-align:left;}
+.cookie-table td{padding:.85rem 1.1rem;font-size:13.5px;color:var(--text2);border-top:1px solid var(--border);vertical-align:top;line-height:1.65;}
+.cookie-table td:first-child{font-family:'Courier New',monospace;color:var(--accent3);font-weight:600;white-space:nowrap;font-size:13px;}
+.badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:4px;letter-spacing:.5px;}
+.badge-essential{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-functional{background:rgba(124,109,250,.1);color:var(--accent3);border:1px solid rgba(124,109,250,.2);}
+.browser-steps{list-style:none;counter-reset:steps;}
+.browser-steps li{counter-increment:steps;padding:.6rem 0 .6rem 2.5rem;border-bottom:1px solid var(--border);position:relative;font-size:14px;color:var(--text2);line-height:1.7;}
+.browser-steps li:last-child{border-bottom:none;}
+.browser-steps li::before{content:counter(steps);position:absolute;left:0;width:24px;height:24px;border-radius:50%;background:var(--accent-bg,rgba(124,109,250,.1));color:var(--accent3);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;top:8px;}
+.browser-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r16);padding:1.5rem;margin:.75rem 0;}
+.browser-block h3{font-size:14px;font-weight:700;margin-bottom:.75rem;}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2rem;}
+.footer-inner{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-size:16px;font-weight:900;letter-spacing:-.5px;}
+.footer-links{display:flex;gap:1.25rem;flex-wrap:wrap;}
+.footer-links a{font-size:13px;color:var(--text3);}
+.footer-links a:hover{color:var(--text2);}
+.footer-copy{font-size:12.5px;color:var(--text3);width:100%;text-align:center;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);}
+@media(max-width:700px){nav{padding:0 1rem;}.nav-links{display:none;}.page-hero,.content{padding-left:1.25rem;padding-right:1.25rem;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="typefrompdf.html" class="nav-logo">Type<span class="gr">FromPDF</span></a>
+  <div class="nav-links">
+    <a href="typefrompdf.html#app">Try It</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="typefrompdf.html" class="btn-back">← Back to App</a>
+</nav>
+
+<div class="page-hero">
+  <div class="section-label">Legal</div>
+  <h1>Cookie Policy</h1>
+  <p class="meta">Last updated: July 16, 2026</p>
+</div>
+
+<div class="content">
+  <div class="status-cards">
+    <div class="status-card yes">
+      <div class="sc-icon">✓</div>
+      <div class="sc-body"><h4>What we DO use</h4><p>Essential browser storage (localStorage / sessionStorage) to run your account and track plan usage limits.</p></div>
+    </div>
+    <div class="status-card no">
+      <div class="sc-icon">✕</div>
+      <div class="sc-body"><h4>What we DON'T use</h4><p>No advertising cookies. No analytics tracking. No session recording. No cross-site tracking of any kind.</p></div>
+    </div>
+  </div>
+
+  <section class="legal">
+    <h2><span class="sec-num">01</span> What Are Cookies &amp; Browser Storage?</h2>
+    <p>Cookies are small text files placed on your device by a website. TypeFromPDF does not use traditional HTTP cookies to store data. Instead, we use two browser-native storage mechanisms:</p>
+    <ul>
+      <li><strong>localStorage</strong> — persistent storage that remains until you manually clear it. Used to store your account information.</li>
+      <li><strong>sessionStorage</strong> — temporary storage that is automatically cleared when you close the browser tab. Used to track your guest PDF session count.</li>
+    </ul>
+    <p>Unlike cookies, localStorage and sessionStorage data is not automatically sent to any server with each request. It is accessible only to scripts running on typefrompdf.com in your browser.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">02</span> Storage We Use</h2>
+    <p>The following is a complete list of every storage key TypeFromPDF uses:</p>
+    <table class="cookie-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Category</th><th>Purpose</th><th>Expires</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>tfp_u</td>
+          <td>localStorage</td>
+          <td><span class="badge badge-essential">Essential</span></td>
+          <td>Stores the array of all registered user accounts for this browser. Contains name, email, hashed password, plan status, and monthly PDF usage count.</td>
+          <td>Until browser data is cleared</td>
+        </tr>
+        <tr>
+          <td>tfp_c</td>
+          <td>localStorage</td>
+          <td><span class="badge badge-essential">Essential</span></td>
+          <td>Stores the currently logged-in user object so you remain logged in between visits.</td>
+          <td>Until logout or browser data cleared</td>
+        </tr>
+        <tr>
+          <td>tfp_g</td>
+          <td>sessionStorage</td>
+          <td><span class="badge badge-functional">Functional</span></td>
+          <td>Tracks the number of PDFs used in the current guest session. Guests are allowed up to 2 PDFs per session. Resets every time you close the tab.</td>
+          <td>Tab close</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>That is the complete list. There are no hidden keys, no analytics identifiers, no advertising tokens.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">03</span> Third-Party Storage</h2>
+    <p>TypeFromPDF loads resources from the following third parties, which may set their own cookies or storage:</p>
+    <ul>
+      <li><strong>Google Fonts</strong> — We load web fonts (Inter and JetBrains Mono) from fonts.googleapis.com. Google may log the request and may set cookies per their privacy policy. We have no control over Google's cookies.</li>
+      <li><strong>Cloudflare CDN</strong> — We load the PDF.js library from cdnjs.cloudflare.com. Cloudflare may log CDN requests for security and performance purposes.</li>
+      <li><strong>Lemon Squeezy</strong> — If you click "Buy" or navigate to the checkout, Lemon Squeezy's scripts will load and may set cookies necessary to process your payment securely. These cookies are used only during the checkout flow.</li>
+    </ul>
+    <p>We deliberately do not embed any analytics services (such as Google Analytics, Mixpanel, Heap, or Hotjar), advertising networks, or social media tracking pixels.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">04</span> Why We Don't Use Tracking Cookies</h2>
+    <p>TypeFromPDF's business model is based on subscriptions, not advertising. We have no financial incentive to track your behavior across the web or build a profile of you for ad targeting. Our product is TypeFromPDF — not your attention data.</p>
+    <p>We believe that a tool meant to help you focus and build skills should not be surveilling you while you use it. This is a core principle, not a compliance checkbox.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">05</span> Your Choices &amp; Controls</h2>
+    <p>You have full control over browser storage data. You can delete all TypeFromPDF storage at any time. Here's how in common browsers:</p>
+    <div class="browser-block">
+      <h3>Chrome</h3>
+      <ol class="browser-steps">
+        <li>Open Chrome DevTools (F12 or right-click → Inspect)</li>
+        <li>Go to Application → Storage → Local Storage → https://typefrompdf.com</li>
+        <li>Select the keys (tfp_u, tfp_c) and press Delete, or right-click → Clear</li>
+      </ol>
+    </div>
+    <div class="browser-block">
+      <h3>Firefox</h3>
+      <ol class="browser-steps">
+        <li>Open Developer Tools (F12)</li>
+        <li>Go to Storage → Local Storage → https://typefrompdf.com</li>
+        <li>Right-click any key and select Delete, or clear all site data from Settings → Privacy &amp; Security → Manage Data</li>
+      </ol>
+    </div>
+    <div class="browser-block">
+      <h3>Safari</h3>
+      <ol class="browser-steps">
+        <li>Go to Safari → Settings → Privacy</li>
+        <li>Click "Manage Website Data"</li>
+        <li>Search for "typefrompdf.com" and click Remove</li>
+      </ol>
+    </div>
+    <p style="margin-top:1rem;">Note: clearing your browser data for TypeFromPDF will log you out and reset your guest PDF count. Your subscription status will need to be restored by contacting us at <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a>.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">06</span> Changes to This Policy</h2>
+    <p>We may update this Cookie Policy if we add new features that require additional storage or change how we use existing storage. We will update the "Last updated" date at the top of this page when changes are made.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">07</span> Contact</h2>
+    <p>If you have questions about how TypeFromPDF uses browser storage, contact us at <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a> or use our <a href="contact.html">contact form</a>.</p>
+  </section>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Type<span class="gr">FromPDF</span></div>
+    <div class="footer-links">
+      <a href="typefrompdf.html">Home</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="cookies.html">Cookies</a>
+    </div>
+    <p class="footer-copy">© 2026 TypeFromPDF. All rights reserved.</p>
+  </div>
+</footer>
+</body>
+</html>
