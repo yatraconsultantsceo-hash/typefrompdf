@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/",          "destination": "/typefrompdf.html" },
     { "source": "/app",       "destination": "/app.html" },
@@ -19,7 +20,11 @@
     },
     {
       "source": "/sitemap.xml",
-      "headers": [{ "key": "Content-Type", "value": "application/xml" }]
+      "headers": [{ "key": "Content-Type", "value": "application/xml; charset=utf-8" }]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
     }
   ]
 }
