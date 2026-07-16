@@ -1,5 +1,4 @@
 {
-  "cleanUrls": true,
   "rewrites": [
     { "source": "/",          "destination": "/typefrompdf.html" },
     { "source": "/app",       "destination": "/app.html" },
