@@ -11,5 +11,7 @@ Disallow: /dashboard
 Disallow: /settings
 Disallow: /success
 Disallow: /cancel
+Disallow: /og-image-generator.html
+Disallow: /favicon-generator.html
 
 Sitemap: https://typefrompdf.com/sitemap.xml
