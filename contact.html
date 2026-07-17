@@ -312,7 +312,7 @@ function toggleFaq(btn){
   if(!isOpen){item.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}
 }
 function updateCount(el){document.getElementById('char-ct').textContent=el.value.length;}
-function submitForm(e){
+async function submitForm(e){
   e.preventDefault();
   const name=document.getElementById('cf-name').value.trim();
   const email=document.getElementById('cf-email').value.trim();
@@ -323,18 +323,34 @@ function submitForm(e){
   if(!/\S+@\S+\.\S+/.test(email)){res.textContent='Please enter a valid email address.';res.className='form-msg err';return;}
   const btn=document.getElementById('submit-btn');
   btn.disabled=true;btn.textContent='Sending…';
-  // Build mailto link
-  const body=encodeURIComponent(`Name: ${name}\nEmail: ${email}\nTopic: ${subject}\n\n${msg}`);
-  const mailtoUrl=`mailto:support@typefrompdf.com?subject=${encodeURIComponent('[TypeFromPDF] '+subject)}&body=${body}`;
-  // Simulate send
-  setTimeout(()=>{
-    window.location.href=mailtoUrl;
-    res.textContent='✓ Your email client has been opened. Thank you, '+name+'! We\'ll reply within 24–48 hours.';
-    res.className='form-msg ok';
-    btn.disabled=false;btn.textContent='Send Message →';
-    document.getElementById('contact-form').reset();
-    document.getElementById('char-ct').textContent='0';
-  },600);
+  try{
+    const r=await fetch('https://api.web3forms.com/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        access_key:'ef315e26-4a62-4e0c-b826-501c508f6215',
+        name:name,
+        email:email,
+        subject:'[TypeFromPDF] '+subject,
+        message:'From: '+name+'\nEmail: '+email+'\nTopic: '+subject+'\n\n'+msg,
+        from_name:'TypeFromPDF Contact Form'
+      })
+    });
+    const data=await r.json();
+    if(data.success){
+      res.textContent='✓ Message sent! Thanks, '+name+'. We\'ll reply within 24–48 hours.';
+      res.className='form-msg ok';
+      document.getElementById('contact-form').reset();
+      document.getElementById('char-ct').textContent='0';
+    }else{
+      res.textContent='Something went wrong. Email us directly: support@typefrompdf.com';
+      res.className='form-msg err';
+    }
+  }catch(err){
+    res.textContent='Network error. Email us directly: support@typefrompdf.com';
+    res.className='form-msg err';
+  }
+  btn.disabled=false;btn.textContent='Send Message →';
 }
 </script>
 </body>
