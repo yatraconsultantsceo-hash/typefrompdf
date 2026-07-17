@@ -85,9 +85,21 @@ nav{
 .btn-ghost:hover{color:var(--text);border-color:var(--border3);background:var(--bg3);}
 .btn-nav-cta{padding:8px 18px;border-radius:var(--r8);font-size:13px;font-weight:700;border:none;background:var(--grad);color:#fff;transition:var(--transition);box-shadow:0 0 20px var(--accent-glow);}
 .btn-nav-cta:hover{opacity:.88;transform:translateY(-1px);}
-.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-user{display:flex;align-items:center;gap:10px;position:relative;}
 .nav-avatar{width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
 .nav-name{font-size:13px;font-weight:600;color:var(--text2);}
+.nav-profile-btn{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rpill);padding:4px 12px 4px 4px;cursor:pointer;transition:var(--transition);}
+.nav-profile-btn:hover{border-color:var(--border3);background:var(--bg4);}
+.nav-profile-btn .nav-name{color:var(--text);}
+.nav-chevron{font-size:10px;color:var(--text3);margin-left:2px;transition:transform .2s;}
+.nav-dropdown{position:absolute;top:calc(100% + 10px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r12);padding:6px;min-width:170px;box-shadow:0 16px 40px rgba(0,0,0,.5);z-index:600;display:none;}
+.nav-dropdown.open{display:block;}
+.nav-dd-email{font-size:11px;color:var(--text3);padding:6px 10px 8px;border-bottom:1px solid var(--border);margin-bottom:4px;word-break:break-all;}
+.nav-dd-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r8);font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;transition:var(--transition);text-decoration:none;width:100%;border:none;background:none;text-align:left;}
+.nav-dd-item:hover{background:var(--bg3);color:var(--text);}
+.nav-dd-item.danger{color:var(--red);}
+.nav-dd-item.danger:hover{background:var(--red-bg);}
+.nav-dd-sep{height:1px;background:var(--border);margin:4px 0;}
 
 /* ── MODALS ── */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:900;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .2s ease;}
@@ -1069,7 +1081,7 @@ function updateNav(){
   const u=Auth.me();
   const nr=$('nav-right');
   if(u){
-    nr.innerHTML=`<div class="nav-user"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="nav-name">${u.name.split(' ')[0]}</span><a href="/app" class="btn-nav-cta" style="text-decoration:none;font-size:13px;padding:8px 16px;">Open App →</a></div>`;
+    nr.innerHTML=`<div class="nav-user"><button class="nav-profile-btn" onclick="toggleNavDrop(event)" id="nav-profile-btn"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="nav-name">${u.name.split(' ')[0]}</span><span class="nav-chevron">▼</span></button><div class="nav-dropdown" id="nav-dropdown"><div class="nav-dd-email">${u.email}</div><a href="/app" class="nav-dd-item" style="text-decoration:none;">🚀 Open App</a><a href="/dashboard" class="nav-dd-item" style="text-decoration:none;">📊 Dashboard</a><a href="/settings" class="nav-dd-item" style="text-decoration:none;">⚙️ Settings</a><div class="nav-dd-sep"></div><button class="nav-dd-item danger" onclick="doLogout()">🚪 Log Out</button></div></div>`;
   } else {
     nr.innerHTML=`<button class="btn-ghost" onclick="openAuth('li')">Log In</button><button class="btn-nav-cta" onclick="openAuth('su')">Sign Up Free</button>`;
   }
@@ -1299,6 +1311,25 @@ function updateWPM(){
   const words=$('typing-input').value.trim().split(/\s+/).filter(Boolean).length;
   $('s-wpm').textContent=mins>0.05?Math.round(words/mins):'—';
 }
+
+function toggleNavDrop(e){
+  e.stopPropagation();
+  const dd=document.getElementById('nav-dropdown');
+  const ch=document.querySelector('.nav-chevron');
+  if(!dd)return;
+  const open=dd.classList.toggle('open');
+  if(ch)ch.style.transform=open?'rotate(180deg)':'';
+}
+function doLogout(){
+  Auth.logout();
+  window.location.href='/';
+}
+document.addEventListener('click',()=>{
+  const dd=document.getElementById('nav-dropdown');
+  const ch=document.querySelector('.nav-chevron');
+  if(dd){dd.classList.remove('open');}
+  if(ch)ch.style.transform='';
+});
 
 // ── INIT ──
 buildProgGrid();
