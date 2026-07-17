@@ -1036,18 +1036,21 @@ async function sendOTP(){
   fpOTP=String(Math.floor(100000+Math.random()*900000));
   // Store OTP with 15-min expiry
   localStorage.setItem('tfp_otp',JSON.stringify({email:fpEmail,code:fpOTP,expires:Date.now()+15*60*1000}));
-  // Send via EmailJS (configure your EmailJS keys in the head script)
+  // Send via EmailJS
   try{
-    if(typeof emailjs!=='undefined'){
-      await emailjs.send('service_22dchiv','template_bvnn8dv',{to_email:fpEmail,passcode:fpOTP,time:'10 minutes'});
-    } else {
-      // Fallback: show code on screen (dev mode)
-      console.log('OTP (dev):', fpOTP);
+    if(typeof emailjs==='undefined'){
+      msg.textContent='Email service not loaded. Please refresh the page.';msg.className='auth-msg err';
+      btn.disabled=false;btn.textContent='Send Reset Code →';return;
     }
-  }catch(e){console.warn('EmailJS error',e);}
-  $('otp-sub').textContent=`We sent a 6-digit code to ${fpEmail}`;
-  showAuthPanel('form-otp');
-  setTimeout(()=>$('otp-inp').focus(),60);
+    await emailjs.send('service_22dchiv','template_bvnn8dv',{to_email:fpEmail,passcode:fpOTP,time:'10 minutes'});
+    $('otp-sub').textContent=`We sent a 6-digit code to ${fpEmail}`;
+    showAuthPanel('form-otp');
+    setTimeout(()=>$('otp-inp').focus(),60);
+  }catch(e){
+    msg.textContent='Failed to send code. Try again or email support@typefrompdf.com';
+    msg.className='auth-msg err';
+    console.error('EmailJS error:',e);
+  }
   btn.disabled=false;btn.textContent='Send Reset Code →';
 }
 
