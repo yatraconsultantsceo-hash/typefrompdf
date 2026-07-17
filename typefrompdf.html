@@ -29,7 +29,7 @@
 <script>window.addEventListener('load',()=>{if(typeof Paddle!=='undefined')Paddle.Setup({token:'live_e012be157ab7779131b2afb0f6e'});});</script>
 <!-- EmailJS (OTP for password reset) — replace with your EmailJS public key -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>window.addEventListener('load',()=>{if(typeof emailjs!=='undefined')emailjs.init({publicKey:'YOUR_EMAILJS_PUBLIC_KEY'});});</script>
+<script>window.addEventListener('load',()=>{if(typeof emailjs!=='undefined')emailjs.init({publicKey:'5PowFNN_CSYje-9Pv'});});</script>
 <script>
 function loadPdfJs(cb){
   if(window.pdfjsLib){cb();return;}
@@ -1027,7 +1027,7 @@ async function sendOTP(){
   // Send via EmailJS (configure your EmailJS keys in the head script)
   try{
     if(typeof emailjs!=='undefined'){
-      await emailjs.send('YOUR_SERVICE_ID','YOUR_TEMPLATE_ID',{to_email:fpEmail,otp_code:fpOTP,to_name:fpEmail.split('@')[0]});
+      await emailjs.send('service_22dchiv','template_bvnn8dv',{to_email:fpEmail,passcode:fpOTP,time:'10 minutes'});
     } else {
       // Fallback: show code on screen (dev mode)
       console.log('OTP (dev):', fpOTP);
