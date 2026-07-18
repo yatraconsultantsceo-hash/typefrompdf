@@ -240,6 +240,58 @@ input,textarea{font-family:'Inter',sans-serif;}
   .prog-grid{grid-template-columns:repeat(3,1fr);}
   .mode-tabs{max-width:100%;}
   .modal-plans{grid-template-columns:1fr;}
+  .lang-grid{grid-template-columns:repeat(3,1fr);}
+  .welcome-actions{grid-template-columns:1fr;}
+  .topbar-stats{gap:.5rem;font-size:11px;}
+  .modal-box{width:calc(100vw - 2rem);max-height:90vh;}
+}
+@media(max-width:480px){
+  .app-topbar{padding:.5rem .875rem .5rem 3.25rem;height:auto;min-height:50px;flex-wrap:wrap;gap:.25rem;}
+  .topbar-title{font-size:12px;}
+  .topbar-stats{font-size:11px;gap:.375rem;}
+  .topbar-badge{font-size:10px;padding:2px 8px;}
+  .app-content{padding:1rem .875rem 2.5rem;}
+  .welcome-title{font-size:1.5rem;}
+  .welcome-sub{font-size:13.5px;}
+  .welcome-actions{grid-template-columns:1fr;gap:.75rem;}
+  .welcome-card{padding:1.25rem;border-radius:var(--r12);}
+  .welcome-card-icon{font-size:1.5rem;margin-bottom:.5rem;}
+  .welcome-card h3{font-size:14px;}
+  .welcome-card p{font-size:12.5px;}
+  .lang-grid{grid-template-columns:repeat(2,1fr);gap:.5rem;}
+  .lang-card{padding:.625rem .5rem;font-size:12px;}
+  .lang-card .lang-name{font-size:11.5px;}
+  .lang-card .lang-tag{font-size:9.5px;padding:1px 5px;}
+  .drop-zone{padding:2rem 1rem;}
+  .drop-zone .drop-icon{font-size:2rem;}
+  .drop-zone p{font-size:13px;}
+  .paste-panel textarea{font-size:13px;min-height:140px;}
+  .ghost-layer,.char-layer{font-size:12.5px;line-height:2;padding:.875rem;}
+  #typing-input{font-size:12.5px;line-height:2;padding:.875rem;min-height:200px;}
+  .prog-grid{grid-template-columns:repeat(2,1fr);gap:.5rem;}
+  .prog-card{padding:.75rem;}
+  .prog-val{font-size:1.25rem;}
+  .prog-label{font-size:10px;}
+  .page-nav{gap:.5rem;flex-wrap:wrap;}
+  .page-nav button{min-height:44px;min-width:44px;font-size:12px;padding:.5rem .75rem;}
+  .mode-tabs{font-size:12px;gap:.25rem;}
+  .mode-tab{padding:.5rem .75rem;min-height:40px;border-radius:var(--r8);}
+  .modal-box{width:calc(100vw - 1.5rem);padding:1.25rem;border-radius:var(--r16);}
+  .modal-title{font-size:16px;}
+  .modal-plans{grid-template-columns:1fr;gap:.75rem;}
+  .plan-card{padding:1.25rem;}
+  .plan-price{font-size:1.5rem;}
+  .plan-btn{min-height:48px;font-size:14px;}
+  .settings-section{padding:1rem;}
+  .settings-field input{min-height:46px;font-size:14px;}
+  .settings-btn{min-height:46px;font-size:14px;}
+  .status-bar{font-size:12px;padding:.5rem .875rem;}
+}
+@media(max-width:360px){
+  .lang-grid{grid-template-columns:repeat(2,1fr);}
+  .prog-grid{grid-template-columns:repeat(2,1fr);}
+  .welcome-title{font-size:1.3rem;}
+  .topbar-stats{display:none;}
 }
 </style>
 </head>

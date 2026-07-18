@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>Favicon Generator — TypeFromPDF</title>
+<style>
+  body{background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;font-family:sans-serif;gap:24px;}
+  .row{display:flex;gap:24px;align-items:center;}
+  .box{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  canvas{image-rendering:pixelated;}
+  label{color:#7070a8;font-size:13px;}
+  button{padding:12px 28px;background:linear-gradient(135deg,#6c5ce7,#7c6dfa,#a29bfe);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
+  h2{color:#f0f0ff;font-size:18px;margin:0;}
+</style>
+</head>
+<body>
+<h2>TypeFromPDF Favicons</h2>
+<div class="row">
+  <div class="box"><canvas id="c512" width="512" height="512"></canvas><label>512×512</label></div>
+  <div class="box"><canvas id="c192" width="192" height="192" style="width:96px;height:96px;"></canvas><label>192×192</label></div>
+  <div class="box"><canvas id="c32" width="32" height="32" style="width:64px;height:64px;"></canvas><label>32×32</label></div>
+  <div class="box"><canvas id="c16" width="16" height="16" style="width:48px;height:48px;"></canvas><label>16×16</label></div>
+</div>
+<div class="row">
+  <button onclick="dl('c512','favicon-512.png')">⬇ 512px</button>
+  <button onclick="dl('c192','apple-touch-icon.png')">⬇ apple-touch-icon.png</button>
+  <button onclick="dl('c32','favicon-32x32.png')">⬇ 32px</button>
+  <button onclick="dl('c16','favicon-16x16.png')">⬇ 16px</button>
+</div>
+
+<script>
+function drawFavicon(canvas){
+  const ctx = canvas.getContext('2d');
+  const S = canvas.width;
+  const r = S * 0.18; // corner radius
+
+  // Background rounded rect
+  ctx.clearRect(0,0,S,S);
+  roundRect(ctx, 0, 0, S, S, r);
+  const bg = ctx.createLinearGradient(0,0,S,S);
+  bg.addColorStop(0,'#0c0c22');
+  bg.addColorStop(1,'#080818');
+  ctx.fillStyle = bg;
+  ctx.fill();
+
+  // Purple glow
+  const glow = ctx.createRadialGradient(S*0.4, S*0.35, 0, S*0.4, S*0.35, S*0.6);
+  glow.addColorStop(0,'rgba(124,109,250,0.25)');
+  glow.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fill();
+
+  // Letter "T" with gradient
+  ctx.font = `900 ${S*0.68}px Inter, Arial Black, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Text gradient
+  const tg = ctx.createLinearGradient(S*0.2, S*0.2, S*0.8, S*0.8);
+  tg.addColorStop(0,'#a29bfe');
+  tg.addColorStop(0.5,'#7c6dfa');
+  tg.addColorStop(1,'#6c5ce7');
+  ctx.fillStyle = tg;
+  ctx.fillText('T', S*0.5, S*0.54);
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+['c512','c192','c32','c16'].forEach(id=>{
+  drawFavicon(document.getElementById(id));
+});
+
+function dl(id, name){
+  const a = document.createElement('a');
+  a.download = name;
+  a.href = document.getElementById(id).toDataURL('image/png');
+  a.click();
+}
+</script>
+</body>
+</html>
