@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Pricing — TypeFromPDF | Free Typing Practice for Students</title>
-<meta name="description" content="Start free — no credit card needed. Practice typing with unlimited PDFs, 18 coding languages, and full progress tracking. Upgrade anytime from $17/month."/>
+<title>Pricing — TypeFromPDF | Student Plan $49/yr · Monthly $17/mo</title>
+<meta name="description" content="Start free — no credit card needed. Student plan $49/year with .edu email. Monthly $17/mo or Yearly $180/yr. Unlimited PDFs, 18 coding languages, full progress tracking."/>
 <link rel="canonical" href="https://typefrompdf.com/pricing.html"/>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -64,9 +64,23 @@ nav{
 .page-hero p{font-size:17px;color:var(--text2);max-width:500px;margin:0 auto 2rem;line-height:1.8;position:relative;z-index:1;}
 .guarantee-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-bg);border:1px solid var(--green-border);color:var(--green);font-size:13px;font-weight:700;padding:8px 18px;border-radius:var(--rpill);position:relative;z-index:1;}
 
+/* TOP BANNER */
+.top-banner{background:linear-gradient(90deg,#5b4de0,#7c6dfa,#9d91fb);color:#fff;text-align:center;padding:9px 1rem;font-size:13px;font-weight:600;}
+.top-banner a{color:#fff;text-decoration:underline;margin-left:6px;opacity:.9;}
+@media(max-width:700px){.top-banner{font-size:11.5px;padding:8px .75rem;}}
+
+/* STUDENT PLAN */
+.plan.student{border-color:rgba(0,210,130,.4);box-shadow:0 0 30px rgba(0,210,130,.08);}
+.plan.student:hover{border-color:rgba(0,210,130,.7);}
+.plan-badge.green{background:linear-gradient(135deg,#00b386,#00d2a0);}
+.plan-cta.green{background:linear-gradient(135deg,#00b386,#00d2a0);color:#fff;border:none;box-shadow:0 4px 20px rgba(0,210,160,.25);}
+.plan-cta.green:hover{opacity:.88;transform:translateY(-1px);}
+.plan-edu-note{font-size:11.5px;color:var(--text3);margin-top:.6rem;text-align:center;line-height:1.5;}
+
 /* PLANS */
-.plans-section{max-width:1000px;margin:0 auto;padding:2rem 2rem 0;}
-.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;align-items:start;}
+.plans-section{max-width:1200px;margin:0 auto;padding:2rem 2rem 0;}
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;align-items:start;}
+@media(max-width:900px){.plans-grid{grid-template-columns:repeat(2,1fr);max-width:700px;margin:0 auto;}}
 @media(max-width:760px){.plans-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto;}}
 .plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r24);padding:2.25rem;position:relative;transition:var(--transition);}
 .plan:hover{transform:translateY(-4px);border-color:var(--border2);}
@@ -150,8 +164,10 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
   .compare-section .sub{font-size:13px;margin-bottom:1.25rem;}
   .compare-table thead th{padding:.7rem .75rem;font-size:10px;}
   .compare-table td{padding:.65rem .75rem;font-size:12px;}
-  .compare-table thead th:nth-child(2){display:none;}
-  .compare-table td:nth-child(2){display:none;}
+  .compare-table thead th:nth-child(3){display:none;}
+  .compare-table td:nth-child(3){display:none;}
+  .compare-table thead th:nth-child(5){display:none;}
+  .compare-table td:nth-child(5){display:none;}
   .faq-section{margin-top:2.5rem;padding:0 .875rem 4rem;}
   .faq-section h2{font-size:1.25rem;letter-spacing:-.4px;}
   .faq-section .sub{font-size:13px;margin-bottom:1.25rem;}
@@ -185,6 +201,11 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       <p style="font-size:13.5px;color:var(--text2);line-height:1.7">We'll email <strong id="early-email-confirm" style="color:var(--text)"></strong> the moment payments go live — with an early-bird discount just for waiting.</p>
     </div>
   </div>
+</div>
+
+<!-- TOP BANNER -->
+<div class="top-banner">
+  🎓 Student Plan: $49/year — Less than $4/month · Requires .edu email.<a href="#student-plan">See Student Plan ↓</a>
 </div>
 
 <nav>
@@ -232,6 +253,49 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       </ul>
     </div>
 
+    <!-- STUDENT -->
+    <div class="plan student" id="student-plan">
+      <div class="plan-badge green">🎓 For Students Only</div>
+      <div class="plan-tier">Student</div>
+      <div class="plan-price">$49 <span class="plan-period">/ year</span></div>
+      <div class="plan-billed">Billed as $49/year · .edu email required</div>
+      <div class="plan-save" style="color:var(--green)">Less than $4/month — yearly only</div>
+      <div class="plan-desc">Everything in paid plans at a steep student discount. Verify your .edu email to unlock.</div>
+      <button class="plan-cta green" onclick="openPaddleCheckout('student')">Get Student Plan →</button>
+      <p class="plan-edu-note">Requires .edu email address · Yearly plan only — no monthly option</p>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Unlimited PDF uploads</li>
+        <li><span class="check">✓</span> All 18 coding languages</li>
+        <li><span class="check">✓</span> Upload your own code files</li>
+        <li><span class="check">✓</span> Paste your own code</li>
+        <li><span class="check">✓</span> Real-time WPM &amp; accuracy tracking</li>
+        <li><span class="check">✓</span> Multi-page PDF navigation</li>
+        <li><span class="check">✓</span> Priority email support</li>
+        <li><span class="check">✓</span> Early access to new features</li>
+      </ul>
+    </div>
+
+    <!-- YEARLY — POPULAR -->
+    <div class="plan popular">
+      <div class="plan-badge">🔥 Most Popular</div>
+      <div class="plan-tier">Yearly</div>
+      <div class="plan-price">$180 <span class="plan-period">/ year</span></div>
+      <div class="plan-billed">= Only $15/month · Includes 2 months FREE</div>
+      <div class="plan-save">Save $24 vs monthly billing</div>
+      <div class="plan-desc">Best value for non-students. Everything included, at $15/month billed annually.</div>
+      <button class="plan-cta filled" onclick="openPaddleCheckout('yearly')">Get Yearly — Best Value</button>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Unlimited PDF uploads</li>
+        <li><span class="check">✓</span> All 18 coding languages</li>
+        <li><span class="check">✓</span> Upload your own code files</li>
+        <li><span class="check">✓</span> Paste your own code</li>
+        <li><span class="check">✓</span> Real-time WPM &amp; accuracy tracking</li>
+        <li><span class="check">✓</span> Multi-page PDF navigation</li>
+        <li><span class="check">✓</span> Priority email support</li>
+        <li><span class="check">✓</span> Early access to new features</li>
+      </ul>
+    </div>
+
     <!-- MONTHLY -->
     <div class="plan">
       <div class="plan-tier">Monthly</div>
@@ -252,26 +316,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       </ul>
     </div>
 
-    <!-- YEARLY — POPULAR -->
-    <div class="plan popular">
-      <div class="plan-badge">🔥 Most Popular</div>
-      <div class="plan-tier">Yearly</div>
-      <div class="plan-price">$180 <span class="plan-period">/ year</span></div>
-      <div class="plan-billed">Billed as $180/year</div>
-      <div class="plan-save">Only $15/mo — you save $24 per year</div>
-      <div class="plan-desc">Best value. Everything in Monthly, at $15/month when you pay annually.</div>
-      <button class="plan-cta filled" onclick="openPaddleCheckout('yearly')">Get Yearly — Best Value</button>
-      <ul class="plan-features">
-        <li><span class="check">✓</span> Unlimited PDF uploads</li>
-        <li><span class="check">✓</span> All 18 coding languages</li>
-        <li><span class="check">✓</span> Upload your own code files</li>
-        <li><span class="check">✓</span> Paste your own code</li>
-        <li><span class="check">✓</span> Real-time WPM &amp; accuracy tracking</li>
-        <li><span class="check">✓</span> Multi-page PDF navigation</li>
-        <li><span class="check">✓</span> Priority email support</li>
-        <li><span class="check">✓</span> Early access to new features</li>
-      </ul>
-    </div>
   </div>
 </div>
 
@@ -285,32 +329,34 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       <tr>
         <th>Feature</th>
         <th>Free</th>
-        <th>Monthly</th>
-        <th class="hi">Yearly</th>
+        <th style="color:#00d2a0">Student $49/yr</th>
+        <th class="hi">Yearly $180/yr</th>
+        <th>Monthly $17/mo</th>
       </tr>
     </thead>
     <tbody>
-      <tr class="cat-row"><td colspan="4">PDF Typing</td></tr>
-      <tr><td>PDF uploads per month</td><td>3</td><td><span class="t-yes">∞</span></td><td><span class="t-yes">∞</span></td></tr>
-      <tr><td>Multi-page PDF navigation</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>In-browser only — never uploaded</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr class="cat-row"><td colspan="5">PDF Typing</td></tr>
+      <tr><td>PDF uploads per month</td><td>3</td><td><span class="t-yes">∞</span></td><td><span class="t-yes">∞</span></td><td><span class="t-yes">∞</span></td></tr>
+      <tr><td>Multi-page PDF navigation</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>In-browser only — never uploaded</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
 
-      <tr class="cat-row"><td colspan="4">Code Mode</td></tr>
-      <tr><td>Free coding languages (5)</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>All 18 coding languages</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>Upload your own code files</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>Paste your own code</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr class="cat-row"><td colspan="5">Code Mode</td></tr>
+      <tr><td>Free coding languages (5)</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>All 18 coding languages</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Upload your own code files</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Paste your own code</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
 
-      <tr class="cat-row"><td colspan="4">Tracking &amp; Stats</td></tr>
-      <tr><td>Real-time WPM</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>Real-time accuracy</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>Progress tracking per session</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr class="cat-row"><td colspan="5">Tracking &amp; Stats</td></tr>
+      <tr><td>Real-time WPM</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Real-time accuracy</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Progress tracking per session</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
 
-      <tr class="cat-row"><td colspan="4">Support &amp; Access</td></tr>
-      <tr><td>Community support</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>Priority email support</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>Early access to new features</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
-      <tr><td>48-hour money-back guarantee</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr class="cat-row"><td colspan="5">Support &amp; Access</td></tr>
+      <tr><td>Community support</td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Priority email support</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Early access to new features</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>48-hour money-back guarantee</td><td><span class="t-no">–</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td><td><span class="t-yes">✓</span></td></tr>
+      <tr><td>Price per year</td><td>Free</td><td style="color:#00d2a0;font-weight:700">$49/yr</td><td style="color:#bfb8ff;font-weight:700">$180/yr</td><td>$204/yr</td></tr>
     </tbody>
   </table>
 </div>
@@ -321,6 +367,10 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
   <h2>Common questions</h2>
   <p class="sub">Still have a question? <a href="contact.html">Email us</a> — we respond within 24–48 hours.</p>
 
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">How does the Student Plan work? <span class="faq-arr">›</span></button>
+    <div class="faq-a"><div class="faq-a-inner">The Student Plan is $49/year — less than $4/month — and requires a valid .edu email address. When you click "Get Student Plan", you'll be asked to enter your .edu email. Once verified, you'll get full access to all premium features at the student price. The student plan is yearly only — no monthly option.</div></div>
+  </div>
   <div class="faq-item">
     <button class="faq-q" onclick="toggleFaq(this)">Can I cancel my subscription at any time? <span class="faq-arr">›</span></button>
     <div class="faq-a"><div class="faq-a-inner">Yes. You can cancel anytime by emailing us at <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a>. We'll cancel your subscription immediately with no questions asked. If you're within 48 hours of your original purchase, you're eligible for a full refund.</div></div>
@@ -335,11 +385,11 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
   </div>
   <div class="faq-item">
     <button class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept? <span class="faq-arr">›</span></button>
-    <div class="faq-a"><div class="faq-a-inner">We accept all major credit and debit cards (Visa, Mastercard, American Express) and PayPal. Payments are processed by Lemon Squeezy, a trusted merchant that handles all international taxes and compliance automatically.</div></div>
+    <div class="faq-a"><div class="faq-a-inner">We accept all major credit and debit cards (Visa, Mastercard, American Express) and PayPal. Payments are processed by Paddle, a trusted merchant that handles all international taxes and compliance automatically.</div></div>
   </div>
   <div class="faq-item">
     <button class="faq-q" onclick="toggleFaq(this)">Is the price the same in all countries? <span class="faq-arr">›</span></button>
-    <div class="faq-a"><div class="faq-a-inner">Yes. TypeFromPDF uses a single global price in USD. Lemon Squeezy, our payment processor, handles currency conversion and any local taxes (such as VAT/GST) where required. The price you see is the price you pay.</div></div>
+    <div class="faq-a"><div class="faq-a-inner">Yes. TypeFromPDF uses a single global price in USD. Paddle, our payment processor, handles currency conversion and any local taxes (such as VAT/GST) where required. The price you see is the price you pay.</div></div>
   </div>
   <div class="faq-item">
     <button class="faq-q" onclick="toggleFaq(this)">Can I switch between Monthly and Yearly? <span class="faq-arr">›</span></button>
@@ -380,18 +430,52 @@ function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
 function openPaddleCheckout(plan){
   const u=JSON.parse(localStorage.getItem('tfp_c')||'null');
-  if(!u){
-    // Not logged in — redirect to home and open signup modal
-    window.location.href='/?openAuth=su';
+  if(!u){window.location.href='/?openAuth=su';return;}
+
+  // Student plan — verify .edu email first
+  if(plan==='student'){
+    const eduEmail=prompt('Enter your .edu email address to verify student status:');
+    if(!eduEmail)return;
+    if(!eduEmail.toLowerCase().endsWith('.edu')){
+      alert('Student plan requires a .edu email address. Please use your college email.');return;
+    }
+    // TODO: Replace STUDENT_PRICE_ID with real Paddle price ID after domain approval
+    const studentPriceId='STUDENT_PRICE_ID';
+    if(studentPriceId==='STUDENT_PRICE_ID'){
+      alert('Student plan is launching very soon! Enter your email at the top to be notified.');return;
+    }
+    if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again.');return;}
+    Paddle.Checkout.open({
+      items:[{priceId:studentPriceId,quantity:1}],
+      customer:{email:eduEmail},
+      settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($49/yr)',cancelUrl:'https://typefrompdf.com/cancel',theme:'dark',displayMode:'overlay'},
+      eventCallback(data){
+        if(data.name==='checkout.completed'){
+          const us=JSON.parse(localStorage.getItem('tfp_u')||'[]');
+          const i=us.findIndex(x=>x.email===u.email);
+          if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
+        }
+      }
+    });
     return;
   }
-  const priceId=plan==='yearly'?'pri_01kxnqmy747shff8effyxaqnch':'pri_01kxnqh2xazqah6k33wecpq905';
+
+  const priceIds={
+    yearly:'pri_01kxnqmy747shff8effyxaqnch',
+    monthly:'pri_01kxnqh2xazqah6k33wecpq905'
+  };
+  const planLabels={
+    yearly:'Yearly+Plan+($180/yr)',
+    monthly:'Monthly+Plan+($17/mo)'
+  };
+  const priceId=priceIds[plan];
+  if(!priceId){alert('Invalid plan selected.');return;}
   if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again.');return;}
   Paddle.Checkout.open({
     items:[{priceId,quantity:1}],
     customer:{email:u.email},
     settings:{
-      successUrl:'https://typefrompdf.com/success?plan='+(plan==='yearly'?'Yearly+Plan+($180/yr)':'Monthly+Plan+($17/mo)'),
+      successUrl:'https://typefrompdf.com/success?plan='+planLabels[plan],
       cancelUrl:'https://typefrompdf.com/cancel',
       theme:'dark',
       displayMode:'overlay',

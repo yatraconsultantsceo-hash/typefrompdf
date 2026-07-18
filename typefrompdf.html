@@ -1003,13 +1003,43 @@ const Auth={
 function openPaddleCheckout(plan){
   const u=Auth.me();
   if(!u){openAuth('su');return;}
-  const priceId=plan==='yearly'?'pri_01kxnqmy747shff8effyxaqnch':'pri_01kxnqh2xazqah6k33wecpq905';
+
+  // Student plan — verify .edu email
+  if(plan==='student'){
+    const eduEmail=prompt('Enter your .edu email address to verify student status:');
+    if(!eduEmail)return;
+    if(!eduEmail.toLowerCase().endsWith('.edu')){
+      alert('Student plan requires a .edu email address. Please use your college email.');return;
+    }
+    const studentPriceId='STUDENT_PRICE_ID'; // TODO: replace after Paddle domain approval
+    if(studentPriceId==='STUDENT_PRICE_ID'){
+      alert('Student plan is launching very soon! Stay tuned.');return;
+    }
+    if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again.');return;}
+    Paddle.Checkout.open({
+      items:[{priceId:studentPriceId,quantity:1}],
+      customer:{email:eduEmail},
+      settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($49/yr)',cancelUrl:'https://typefrompdf.com/cancel',theme:'dark',displayMode:'overlay'},
+      eventCallback(data){
+        if(data.name==='checkout.completed'){
+          const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
+          if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
+        }
+      }
+    });
+    return;
+  }
+
+  const priceIds={yearly:'pri_01kxnqmy747shff8effyxaqnch',monthly:'pri_01kxnqh2xazqah6k33wecpq905'};
+  const priceId=priceIds[plan];
+  if(!priceId){alert('Invalid plan selected.');return;}
   if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again in a moment.');return;}
   Paddle.Checkout.open({
     items:[{priceId,quantity:1}],
     customer:{email:u.email},
     settings:{
-      successUrl:'https://typefrompdf.com/success',
+      successUrl:'https://typefrompdf.com/success?plan='+(plan==='yearly'?'Yearly+Plan+($180/yr)':'Monthly+Plan+($17/mo)'),
+      cancelUrl:'https://typefrompdf.com/cancel',
       theme:'dark',
       displayMode:'overlay',
     },
