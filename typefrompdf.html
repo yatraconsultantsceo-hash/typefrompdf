@@ -1011,10 +1011,8 @@ function openPaddleCheckout(plan){
     if(!eduEmail.toLowerCase().endsWith('.edu')){
       alert('Student plan requires a .edu email address. Please use your college email.');return;
     }
-    const studentPriceId='STUDENT_PRICE_ID'; // TODO: replace after Paddle domain approval
-    if(studentPriceId==='STUDENT_PRICE_ID'){
-      alert('Student plan is launching very soon! Stay tuned.');return;
-    }
+    const studentPriceId='pri_01kxtr2axam5bxkp3ck3xb8vak';
+
     if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again.');return;}
     Paddle.Checkout.open({
       items:[{priceId:studentPriceId,quantity:1}],
