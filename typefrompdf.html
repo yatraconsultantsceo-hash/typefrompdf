@@ -490,9 +490,38 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
   .section-title{font-size:1.3rem;}
   .prog-grid{grid-template-columns:repeat(2,1fr);}
 }
+
+/* ── TOP BANNER ── */
+.top-banner{background:linear-gradient(90deg,#5b4de0,#7c6dfa,#9d91fb);color:#fff;text-align:center;padding:9px 1rem;font-size:13px;font-weight:600;letter-spacing:.01em;position:relative;z-index:200;}
+.top-banner a{color:#fff;text-decoration:underline;margin-left:6px;opacity:.9;}
+.top-banner a:hover{opacity:1;}
+@media(max-width:700px){.top-banner{font-size:11.5px;padding:8px .75rem;}}
+
+/* ── TESTIMONIALS ── */
+.testimonials-section{padding:4rem 2rem;text-align:center;}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;max-width:900px;margin:2rem auto 0;}
+.testi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r16);padding:1.5rem;text-align:left;position:relative;}
+.testi-card::before{content:'"';position:absolute;top:12px;right:18px;font-size:48px;color:var(--accent);opacity:.18;font-family:Georgia,serif;line-height:1;}
+.testi-text{font-size:14.5px;color:var(--text);line-height:1.7;margin-bottom:1rem;font-style:italic;}
+.testi-author{font-size:12.5px;font-weight:700;color:var(--accent3);}
+@media(max-width:700px){.testimonials-grid{grid-template-columns:1fr;}.testimonials-section{padding:2.5rem .875rem;}}
+
+/* ── STUDENT PLAN ── */
+.plan-mini.student{border-color:rgba(0,210,130,.4);box-shadow:0 0 30px rgba(0,210,130,.08);}
+.plan-mini.student:hover{border-color:rgba(0,210,130,.7);}
+.pm-badge.green{background:linear-gradient(135deg,#00b386,#00d2a0);}
+.pm-cta.green{background:linear-gradient(135deg,#00b386,#00d2a0);color:#fff;border:none;box-shadow:0 4px 20px rgba(0,210,160,.25);}
+.pm-cta.green:hover{opacity:.88;transform:translateY(-1px);}
+.pm-edu-note{font-size:11px;color:var(--text3);margin-top:.6rem;text-align:center;line-height:1.5;}
+.plans-mini{max-width:1120px;}
 </style>
 </head>
 <body>
+
+<!-- TOP BANNER -->
+<div class="top-banner">
+  🎓 Student Plan: $49/year — Less than $4/month · Yearly only.<a href="pricing.html">Verify your .edu email →</a>
+</div>
 
 <!-- AUTH MODAL -->
 <div id="auth-modal" class="modal-backdrop hidden" onclick="if(event.target===this)closeAuth()">
@@ -627,8 +656,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
   <div class="orb orb2"></div>
   <div class="orb orb3"></div>
   <div class="hero-badge"><span class="live-dot"></span> Unique · No competitor does this</div>
-  <h1>Type over your <span class="gr">own content.</span><br/>Learn while you practice.</h1>
-  <p>Upload any PDF and type over ghost text to build real speed, memory, and accuracy — with your own notes, textbooks, and documents. Not random sentences.</p>
+  <h1>Study Smarter. Type Your Notes.<br/><span class="gr">Ace Your Exams.</span></h1>
+  <p>Upload your class notes, textbooks, or study guides and type over them to memorize faster. Used by students at 200+ colleges.</p>
   <div class="hero-btns">
     <button class="btn-primary" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'})">Start Typing Free →</button>
     <button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>
@@ -641,6 +670,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
     <div class="trust-item"><strong>100%</strong> Private</div>
     <div class="trust-div"></div>
     <div class="trust-item"><strong>Free</strong> to Start</div>
+    <div class="trust-div"></div>
+    <div class="trust-item"><strong>200+</strong> Colleges</div>
   </div>
   <div class="demo-wrap">
     <div class="demo-card">
@@ -672,6 +703,26 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
     <div class="feat"><div class="feat-icon fi-p">🔒</div><h3>100% Private</h3><p>Your PDFs are processed entirely in your browser using JavaScript. Nothing is ever uploaded to any server. Your documents stay yours.</p></div>
     <div class="feat"><div class="feat-icon fi-g">📖</div><h3>Full Document Navigation</h3><p>Practice entire PDFs page by page. Navigate forward and backward through multi-page documents without losing your progress.</p></div>
     <div class="feat"><div class="feat-icon fi-b">📋</div><h3>Paste Your Own Code</h3><p>Don't want to upload a file? Paste any code directly into the editor and start practicing immediately. Works for any language.</p></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-label">Student Love</div>
+  <div class="section-title">Real students. Real results.</div>
+  <div class="testimonials-grid">
+    <div class="testi-card">
+      <p class="testi-text">Helped me memorize my anatomy notes before finals. I typed through the entire chapter twice and actually retained it.</p>
+      <div class="testi-author">Pre-Med Student · UCLA</div>
+    </div>
+    <div class="testi-card">
+      <p class="testi-text">I type Python code every morning. My speed went from 45 to 80 WPM in 3 weeks — and I understand the code better now too.</p>
+      <div class="testi-author">CS Major · UT Austin</div>
+    </div>
+    <div class="testi-card">
+      <p class="testi-text">Best study tool I've found. Zero ads, totally private, and it actually works with my own notes instead of random sentences.</p>
+      <div class="testi-author">Law Student · NYU</div>
+    </div>
   </div>
 </section>
 
@@ -785,11 +836,25 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       </ul>
       <button class="pm-cta outline" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'})">Start Free →</button>
     </div>
+    <div class="plan-mini student">
+      <div class="pm-badge green">🎓 For Students Only</div>
+      <div class="pm-tier">Student</div>
+      <div class="pm-price">$49 <span class="pm-period">/ year</span></div>
+      <div class="pm-note" style="color:var(--green);font-weight:600">Less than $4/month — yearly only</div>
+      <ul class="pm-features">
+        <li>Unlimited PDF uploads</li>
+        <li>All 18 coding languages</li>
+        <li>Upload your own code files</li>
+        <li>Typing history &amp; progress</li>
+      </ul>
+      <button class="pm-cta green" onclick="openPaddleCheckout('student')">Get Student Plan →</button>
+      <p class="pm-edu-note">Requires .edu email address · Yearly plan only — no monthly option</p>
+    </div>
     <div class="plan-mini pop">
       <div class="pm-badge">🔥 Most Popular</div>
       <div class="pm-tier">Yearly</div>
       <div class="pm-price">$180 <span class="pm-period">/ year</span></div>
-      <div class="pm-note" style="color:var(--green);font-weight:600">Only $15/month — save $24</div>
+      <div class="pm-note" style="color:var(--green);font-weight:600">= Only $15/month · Includes 2 months FREE</div>
       <ul class="pm-features">
         <li>Unlimited PDF uploads</li>
         <li>All 18 coding languages</li>
@@ -1348,7 +1413,7 @@ updateNav();
     // But show "Open App" as primary hero button
     const heroBtns=document.querySelector('.hero-btns');
     if(heroBtns){
-      heroBtns.innerHTML=`<a href="/app" class="btn-primary" style="text-decoration:none;">Open My Workspace →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
+      heroBtns.innerHTML=`<a href="/app" class="btn-primary" style="text-decoration:none;">Start Studying Free →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
     }
   }
 })();
