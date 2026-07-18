@@ -33,6 +33,7 @@
 <!-- EmailJS (OTP for password reset) — replace with your EmailJS public key -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>window.addEventListener('load',()=>{if(typeof emailjs!=='undefined')emailjs.init({publicKey:'SPowFNN_CSYJe-9Pv'});});</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 function loadPdfJs(cb){
   if(window.pdfjsLib){cb();return;}
@@ -1180,59 +1181,93 @@ function setStatus(t){const el=$('status-msg');if(el)el.textContent=t;}
 function goto(id){$(id)?.scrollIntoView({behavior:'smooth'});}
 
 // ── UTILS ──
-async function hashPass(p){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 function markErr(id){$(id)&&$(id).classList.add('err-input');}
 function clearErr(id,msgId){$(id)&&$(id).classList.remove('err-input');if(msgId&&$(msgId)){$(msgId).textContent='';$(msgId).className='auth-msg';}}
 function togglePw(id,btn){const i=$(id);const show=i.type==='password';i.type=show?'text':'password';btn.textContent=show?'🙈':'👁';}
 
-// ── AUTH ──
+// ── SUPABASE AUTH ──
+const SUPABASE_URL='https://acedhshtcdffdwhdfyik.supabase.co';
+const SUPABASE_KEY='sb_publishable_SMwJ2SzqTmrxGJeE2Qu2VA_8mDWG5Qo';
+let _sb=null;
+let _currentUser=null;
+function getSb(){if(!_sb)_sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);return _sb;}
+
 const Auth={
-  all:()=>JSON.parse(localStorage.getItem('tfp_u')||'[]'),
-  me:()=>JSON.parse(localStorage.getItem('tfp_c')||'null'),
+  me(){return _currentUser;},
+  isPaid(){return _currentUser&&_currentUser.plan==='paid';},
+  async init(){
+    const sb=getSb();
+    const{data:{session}}=await sb.auth.getSession();
+    if(session){
+      const{data:p}=await sb.from('profiles').select('*').eq('id',session.user.id).single();
+      _currentUser=p?{...p,email:session.user.email}:null;
+    }else{_currentUser=null;}
+    sb.auth.onAuthStateChange(async(event,session)=>{
+      if(event==='PASSWORD_RECOVERY'){openAuth('newpw');}
+      else if(event==='SIGNED_OUT'){_currentUser=null;}
+    });
+    return _currentUser;
+  },
   async signup(n,e,p){
     if(!n.trim())return{err:'Please enter your name.',field:'su-name'};
     if(!validEmail(e))return{err:'Please enter a valid email address.',field:'su-email'};
     if(p.length<6)return{err:'Password must be at least 6 characters.',field:'su-pass'};
-    const us=this.all();
-    if(us.find(u=>u.email===e.toLowerCase()))return{err:'This email is already registered. Log in instead.',field:'su-email'};
-    const h=await hashPass(p);
-    const u={name:n.trim(),email:e.toLowerCase(),pass:h,plan:'free',pdfs:0,month:''};
-    us.push(u);localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(u));return{user:u};
+    const sb=getSb();
+    const{data,error}=await sb.auth.signUp({email:e.toLowerCase(),password:p,options:{data:{name:n.trim()}}});
+    if(error){
+      if(error.message.toLowerCase().includes('already')||error.status===422)
+        return{err:'This email is already registered. Log in instead.',field:'su-email'};
+      return{err:error.message,field:'su-email'};
+    }
+    if(data.user){
+      const{data:prof}=await sb.from('profiles').select('*').eq('id',data.user.id).single();
+      _currentUser=prof?{...prof,email:data.user.email}:{name:n.trim(),email:e.toLowerCase(),plan:'free'};
+    }
+    return{user:_currentUser};
   },
   async login(e,p){
     if(!validEmail(e))return{err:'Please enter a valid email address.',field:'li-email'};
     if(!p)return{err:'Please enter your password.',field:'li-pass'};
-    const h=await hashPass(p);
-    // support both hashed and legacy plain-text passwords
-    const u=this.all().find(u=>u.email===e.toLowerCase()&&(u.pass===h||u.pass===p));
-    if(!u)return{err:'Incorrect email or password.',field:'li-pass'};
-    // migrate plain-text to hashed on login
-    if(u.pass===p){const us=this.all(),i=us.findIndex(x=>x.email===u.email);if(i>=0){us[i].pass=h;localStorage.setItem('tfp_u',JSON.stringify(us));u.pass=h;}}
-    localStorage.setItem('tfp_c',JSON.stringify(u));return{user:u};
+    const sb=getSb();
+    const{data,error}=await sb.auth.signInWithPassword({email:e.toLowerCase(),password:p});
+    if(error)return{err:'Incorrect email or password.',field:'li-pass'};
+    if(data.user){
+      const{data:prof}=await sb.from('profiles').select('*').eq('id',data.user.id).single();
+      _currentUser=prof?{...prof,email:data.user.email}:null;
+    }
+    return{user:_currentUser};
   },
-  logout(){localStorage.removeItem('tfp_c');},
+  async logout(){await getSb().auth.signOut();_currentUser=null;},
+  async sendPasswordReset(email){
+    const{error}=await getSb().auth.resetPasswordForEmail(email,{redirectTo:'https://typefrompdf.com/typefrompdf.html'});
+    if(error)throw error;
+  },
+  async updatePassword(newPass){
+    const{error}=await getSb().auth.updateUser({password:newPass});
+    if(error)throw error;
+  },
+  async updatePlan(plan){
+    const sb=getSb();
+    const{data:{user}}=await sb.auth.getUser();
+    if(!user)return;
+    await sb.from('profiles').update({plan}).eq('id',user.id);
+    if(_currentUser)_currentUser.plan=plan;
+  },
   canPDF(){
-    const u=this.me();
+    const u=_currentUser;
     if(!u)return parseInt(sessionStorage.getItem('tfp_g')||'0')<2;
     if(u.plan==='paid')return true;
     const m=new Date().toISOString().slice(0,7);
     return(u.month!==m?0:u.pdfs)<3;
   },
   trackPDF(){
-    const u=this.me();
+    const u=_currentUser;
     if(!u){sessionStorage.setItem('tfp_g',parseInt(sessionStorage.getItem('tfp_g')||'0')+1);return;}
-    const us=this.all(),i=us.findIndex(x=>x.email===u.email);
-    if(i<0)return;
     const m=new Date().toISOString().slice(0,7);
-    if(us[i].month!==m){us[i].month=m;us[i].pdfs=0;}
-    us[i].pdfs=(us[i].pdfs||0)+1;
-    localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));
-  },
-  isPaid(){const u=this.me();return u&&u.plan==='paid';}
+    if(u.month!==m){u.month=m;u.pdfs=0;}
+    u.pdfs=(u.pdfs||0)+1;
+  }
 };
 
 // ── PADDLE CHECKOUT ──
@@ -1255,10 +1290,7 @@ function openPaddleCheckout(plan){
       customer:{email:eduEmail},
       settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($49/yr)',cancelUrl:'https://typefrompdf.com/cancel',theme:'dark',displayMode:'overlay'},
       eventCallback(data){
-        if(data.name==='checkout.completed'){
-          const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
-          if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
-        }
+        if(data.name==='checkout.completed'){Auth.updatePlan('paid').then(()=>updateNav());}
       }
     });
     return;
@@ -1278,10 +1310,7 @@ function openPaddleCheckout(plan){
       displayMode:'overlay',
     },
     eventCallback(data){
-      if(data.name==='checkout.completed'){
-        const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
-        if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
-      }
+      if(data.name==='checkout.completed'){Auth.updatePlan('paid').then(()=>updateNav());}
     }
   });
 }
@@ -1356,47 +1385,22 @@ async function doLogin(){
   }
 }
 
-// ── FORGOT PASSWORD OTP ──
+// ── FORGOT PASSWORD ──
 async function sendOTP(){
   const email=$('fp-email').value.trim();
   const msg=$('fp-msg'),btn=$('fp-btn');
   if(!validEmail(email)){msg.textContent='Please enter a valid email.';msg.className='auth-msg err';markErr('fp-email');return;}
-  const users=Auth.all();
-  if(!users.find(u=>u.email===email.toLowerCase())){msg.textContent='No account found with this email.';msg.className='auth-msg err';markErr('fp-email');return;}
   btn.disabled=true;btn.textContent='Sending…';
-  fpEmail=email.toLowerCase();
-  fpOTP=String(Math.floor(100000+Math.random()*900000));
-  // Store OTP with 15-min expiry
-  localStorage.setItem('tfp_otp',JSON.stringify({email:fpEmail,code:fpOTP,expires:Date.now()+15*60*1000}));
-  // Send via EmailJS
   try{
-    if(typeof emailjs==='undefined'){
-      msg.textContent='Email service not loaded. Please refresh the page.';msg.className='auth-msg err';
-      btn.disabled=false;btn.textContent='Send Reset Code →';return;
-    }
-    await emailjs.send('service_22dchiv','template_bvnn8dv',{to_email:fpEmail,passcode:fpOTP,time:'10 minutes'});
-    $('otp-sub').textContent=`We sent a 6-digit code to ${fpEmail}`;
-    showAuthPanel('form-otp');
-    setTimeout(()=>$('otp-inp').focus(),60);
+    await Auth.sendPasswordReset(email);
+    msg.textContent='✓ Check your email for a reset link!';msg.className='auth-msg ok';
   }catch(e){
-    msg.textContent='Failed to send code. Try again or email support@typefrompdf.com';
-    msg.className='auth-msg err';
-    console.error('EmailJS error:',e);
+    msg.textContent='Failed to send. Check the email and try again.';msg.className='auth-msg err';
   }
-  btn.disabled=false;btn.textContent='Send Reset Code →';
+  btn.disabled=false;btn.textContent='Send Reset Link →';
 }
 
-function verifyOTP(){
-  const entered=$('otp-inp').value.trim();
-  const msg=$('otp-msg'),btn=$('otp-btn');
-  const stored=JSON.parse(localStorage.getItem('tfp_otp')||'null');
-  if(!stored||stored.email!==fpEmail){msg.textContent='OTP expired. Please request a new code.';msg.className='auth-msg err';return;}
-  if(Date.now()>stored.expires){msg.textContent='Code expired. Please request a new one.';msg.className='auth-msg err';localStorage.removeItem('tfp_otp');return;}
-  if(entered!==stored.code){msg.textContent='Incorrect code. Please try again.';msg.className='auth-msg err';markErr('otp-inp');return;}
-  localStorage.removeItem('tfp_otp');
-  showAuthPanel('form-newpw');
-  setTimeout(()=>$('np-pass').focus(),60);
-}
+function verifyOTP(){/* Handled via email link — no OTP needed */}
 
 async function doResetPassword(){
   const p1=$('np-pass').value,p2=$('np-pass2').value;
@@ -1404,12 +1408,13 @@ async function doResetPassword(){
   if(p1.length<6){msg.textContent='Password must be at least 6 characters.';msg.className='auth-msg err';markErr('np-pass');return;}
   if(p1!==p2){msg.textContent='Passwords do not match.';msg.className='auth-msg err';markErr('np-pass2');return;}
   btn.disabled=true;btn.textContent='Updating…';
-  const h=await hashPass(p1);
-  const us=Auth.all(),i=us.findIndex(u=>u.email===fpEmail);
-  if(i>=0){us[i].pass=h;localStorage.setItem('tfp_u',JSON.stringify(us));}
-  msg.textContent='✓ Password updated! Redirecting to login…';msg.className='auth-msg ok';
-  fpEmail='';fpOTP='';
-  setTimeout(()=>{closeAuth();openAuth('li');},1500);
+  try{
+    await Auth.updatePassword(p1);
+    msg.textContent='✓ Password updated! Redirecting…';msg.className='auth-msg ok';
+    setTimeout(()=>{closeAuth();window.location.href='app.html';},1500);
+  }catch(e){
+    msg.textContent='Failed to update. Please try again.';msg.className='auth-msg err';
+  }
   btn.disabled=false;btn.textContent='Update Password →';
 }
 function updateNav(){
@@ -1655,8 +1660,8 @@ function toggleNavDrop(e){
   const open=dd.classList.toggle('open');
   if(ch)ch.style.transform=open?'rotate(180deg)':'';
 }
-function doLogout(){
-  Auth.logout();
+async function doLogout(){
+  await Auth.logout();
   window.location.href='typefrompdf.html';
 }
 document.addEventListener('click',()=>{
@@ -1668,26 +1673,21 @@ document.addEventListener('click',()=>{
 
 // ── INIT ──
 buildProgGrid();
-updateNav();
-// If already logged in, show 'Open App' in hero CTAs
-(function(){
+(async function(){
+  await Auth.init();
+  updateNav();
   const u=Auth.me();
   if(u){
-    // Don't auto-redirect — let them browse the marketing page
-    // But show "Open App" as primary hero button
     const heroBtns=document.querySelector('.hero-btns');
     if(heroBtns){
       heroBtns.innerHTML=`<a href="app.html" class="btn-primary" style="text-decoration:none;">Open Workspace →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
     }
   }
-})();
-// Handle ?openAuth= URL param (from pricing page redirect when not logged in)
-(function(){
+  // Handle ?openAuth= URL param
   const params=new URLSearchParams(window.location.search);
   const tab=params.get('openAuth');
   if(tab==='su'||tab==='li'){
     setTimeout(()=>openAuth(tab),300);
-    // Clean URL
     history.replaceState({},'','/');
   }
 })();

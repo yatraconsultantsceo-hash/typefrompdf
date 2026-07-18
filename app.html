@@ -12,6 +12,7 @@
 <script>window.addEventListener('load',()=>{if(typeof Paddle!=='undefined')Paddle.Setup({token:'live_e012be157ab7779131b2afb0f6e'});});</script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>window.addEventListener('load',()=>{if(typeof emailjs!=='undefined')emailjs.init({publicKey:'SPowFNN_CSYJe-9Pv'});});</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 function loadPdfJs(cb){
   if(window.pdfjsLib){cb();return;}
@@ -514,31 +515,43 @@ input,textarea{font-family:'Inter',sans-serif;}
 function $(id){return document.getElementById(id);}
 function esc(c){return c==='&'?'&amp;':c==='<'?'&lt;':c==='>'?'&gt;':c;}
 function setStatus(t){const el=$('status-msg');if(el)el.textContent=t;}
-async function hashPass(p){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 function togglePw(id,btn){const i=$(id);const show=i.type==='password';i.type=show?'text':'password';btn.textContent=show?'🙈':'👁';}
 
-// ── AUTH ──
+// ── SUPABASE AUTH ──
+const SUPABASE_URL='https://acedhshtcdffdwhdfyik.supabase.co';
+const SUPABASE_KEY='sb_publishable_SMwJ2SzqTmrxGJeE2Qu2VA_8mDWG5Qo';
+let _sb=null;
+let _currentUser=null;
+function getSb(){if(!_sb)_sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);return _sb;}
+
 const Auth={
-  all:()=>JSON.parse(localStorage.getItem('tfp_u')||'[]'),
-  me:()=>JSON.parse(localStorage.getItem('tfp_c')||'null'),
-  logout(){localStorage.removeItem('tfp_c');},
-  canPDF(){const u=this.me();if(!u)return false;if(u.plan==='paid')return true;const m=new Date().toISOString().slice(0,7);return(u.month!==m?0:u.pdfs)<3;},
-  trackPDF(){
-    const u=this.me();if(!u)return;
-    const us=this.all(),i=us.findIndex(x=>x.email===u.email);if(i<0)return;
-    const m=new Date().toISOString().slice(0,7);
-    if(us[i].month!==m){us[i].month=m;us[i].pdfs=0;}
-    us[i].pdfs=(us[i].pdfs||0)+1;
-    localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));
+  me(){return _currentUser;},
+  isPaid(){return _currentUser&&_currentUser.plan==='paid';},
+  canPDF(){const u=_currentUser;if(!u)return false;if(u.plan==='paid')return true;const m=new Date().toISOString().slice(0,7);return(u.month!==m?0:u.pdfs)<3;},
+  trackPDF(){const u=_currentUser;if(!u)return;const m=new Date().toISOString().slice(0,7);if(u.month!==m){u.month=m;u.pdfs=0;}u.pdfs=(u.pdfs||0)+1;},
+  async logout(){await getSb().auth.signOut();_currentUser=null;},
+  async updatePlan(plan){
+    const sb=getSb();
+    const{data:{user}}=await sb.auth.getUser();
+    if(!user)return;
+    await sb.from('profiles').update({plan}).eq('id',user.id);
+    if(_currentUser)_currentUser.plan=plan;
   },
-  isPaid(){const u=this.me();return u&&u.plan==='paid';}
+  async updatePassword(newPass){
+    const{error}=await getSb().auth.updateUser({password:newPass});
+    if(error)throw error;
+  }
 };
 
 // ── AUTH GATE ──
-(function(){
-  const u=Auth.me();
-  if(!u){window.location.href='typefrompdf.html';return;}
+(async function(){
+  const sb=getSb();
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='typefrompdf.html';return;}
+  const{data:prof}=await sb.from('profiles').select('*').eq('id',session.user.id).single();
+  _currentUser=prof?{...prof,email:session.user.email}:{name:'User',email:session.user.email,plan:'free'};
+  const u=_currentUser;
   $('sb-avatar').textContent=u.name[0].toUpperCase();
   $('sb-name').textContent=u.name.split(' ')[0];
   const planEl=$('sb-plan'),topPlan=$('top-plan');
@@ -546,7 +559,7 @@ const Auth={
     planEl.textContent='Premium';planEl.className='sb-user-plan plan-paid';
     topPlan.textContent='Premium';topPlan.className='tb-plan-badge plan-paid';
     $('sb-upgrade-wrap').style.display='none';
-  } else {
+  }else{
     planEl.textContent='Free (3 PDFs/mo)';planEl.className='sb-user-plan plan-free';
     topPlan.textContent='Free';topPlan.className='tb-plan-badge plan-free';
   }
@@ -812,7 +825,7 @@ function openPaddleCheckout(plan){
       items:[{priceId:'pri_01kxtr2axam5bxkp3ck3xb8vak',quantity:1}],
       customer:{email:edu},
       settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($49/yr)',cancelUrl:'https://typefrompdf.com/app.html',theme:'dark',displayMode:'overlay'},
-      eventCallback(data){if(data.name==='checkout.completed')upgradePlan(u);}
+      eventCallback(data){if(data.name==='checkout.completed')upgradePlan();}
     });
     return;
   }
@@ -822,13 +835,11 @@ function openPaddleCheckout(plan){
   Paddle.Checkout.open({
     items:[{priceId,quantity:1}],customer:{email:u.email},
     settings:{successUrl:'https://typefrompdf.com/success?plan='+(plan==='yearly'?'Yearly+Plan+($180/yr)':'Monthly+Plan+($17/mo)'),cancelUrl:'https://typefrompdf.com/app.html',theme:'dark',displayMode:'overlay'},
-    eventCallback(data){if(data.name==='checkout.completed')upgradePlan(u);}
+    eventCallback(data){if(data.name==='checkout.completed')upgradePlan();}
   });
 }
-function upgradePlan(u){
-  const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
-  if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
-  location.reload();
+function upgradePlan(){
+  Auth.updatePlan('paid').then(()=>location.reload());
 }
 
 // ── MODALS ──
@@ -838,21 +849,21 @@ function openSettings(){$('settings-modal').classList.remove('hidden');}
 function closeSettings(){$('settings-modal').classList.add('hidden');$('set-msg').textContent='';$('set-msg').className='auth-msg';}
 
 async function doChangePassword(){
-  const curPw=$('set-cur-pw').value,newPw=$('set-new-pw').value;
+  const newPw=$('set-new-pw').value;
   const msg=$('set-msg');
-  if(!curPw||!newPw){msg.textContent='Please fill in both fields.';msg.className='auth-msg err';return;}
-  if(newPw.length<6){msg.textContent='New password must be at least 6 characters.';msg.className='auth-msg err';return;}
-  const u=Auth.me();if(!u)return;
-  const curHash=await hashPass(curPw);
-  const us=Auth.all(),i=us.findIndex(x=>x.email===u.email);
-  if(i<0||(us[i].pass!==curHash&&us[i].pass!==curPw)){msg.textContent='Current password is incorrect.';msg.className='auth-msg err';return;}
-  us[i].pass=await hashPass(newPw);
-  localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));
-  msg.textContent='✓ Password updated!';msg.className='auth-msg ok';
-  $('set-cur-pw').value='';$('set-new-pw').value='';
+  if(!newPw){msg.textContent='Please enter a new password.';msg.className='auth-msg err';return;}
+  if(newPw.length<6){msg.textContent='Password must be at least 6 characters.';msg.className='auth-msg err';return;}
+  try{
+    await Auth.updatePassword(newPw);
+    msg.textContent='✓ Password updated!';msg.className='auth-msg ok';
+    $('set-new-pw').value='';
+    if($('set-cur-pw'))$('set-cur-pw').value='';
+  }catch(e){
+    msg.textContent='Failed to update. Please try again.';msg.className='auth-msg err';
+  }
 }
 
-function doLogout(){Auth.logout();window.location.href='typefrompdf.html';}
+async function doLogout(){await Auth.logout();window.location.href='typefrompdf.html';}
 
 // ── INIT ──
 buildProgGrid();
