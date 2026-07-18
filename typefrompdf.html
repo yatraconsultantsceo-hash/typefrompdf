@@ -1198,15 +1198,19 @@ const Auth={
   isPaid(){return _currentUser&&_currentUser.plan==='paid';},
   async init(){
     const sb=getSb();
+    // Register listener FIRST so PASSWORD_RECOVERY is never missed
+    sb.auth.onAuthStateChange(async(event,session)=>{
+      if(event==='PASSWORD_RECOVERY'){
+        setTimeout(()=>openAuth('newpw'),300);
+      } else if(event==='SIGNED_OUT'){
+        _currentUser=null;
+      }
+    });
     const{data:{session}}=await sb.auth.getSession();
-    if(session){
+    if(session&&session.user){
       const{data:p}=await sb.from('profiles').select('*').eq('id',session.user.id).single();
       _currentUser=p?{...p,email:session.user.email}:null;
     }else{_currentUser=null;}
-    sb.auth.onAuthStateChange(async(event,session)=>{
-      if(event==='PASSWORD_RECOVERY'){openAuth('newpw');}
-      else if(event==='SIGNED_OUT'){_currentUser=null;}
-    });
     return _currentUser;
   },
   async signup(n,e,p){
