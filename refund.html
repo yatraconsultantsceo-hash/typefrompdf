@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Refund Policy — TypeFromPDF</title>
+<meta name="description" content="TypeFromPDF's refund policy. All paid plans include a 48-hour full refund guarantee — no questions asked."/>
+<link rel="canonical" href="https://typefrompdf.com/refund.html"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<meta name="robots" content="index,follow"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#03030d;--bg2:#08081c;--bg3:#0c0c22;
+  --border:#1a1a3a;--border2:#252550;
+  --text:#f0f0ff;--text2:#7070a8;--text3:#36365a;
+  --accent:#7c6dfa;--accent2:#9d91fb;--accent3:#bfb8ff;
+  --accent-bg:rgba(124,109,250,.08);
+  --green:#00d2a0;--green-bg:rgba(0,210,160,.08);--green-border:rgba(0,210,160,.2);
+  --red:#ff6b6b;--red-bg:rgba(255,107,107,.06);--red-border:rgba(255,107,107,.2);
+  --gold:#ffd93d;--gold-bg:rgba(255,217,61,.06);--gold-border:rgba(255,217,61,.2);
+  --grad:linear-gradient(135deg,#6c5ce7 0%,#7c6dfa 50%,#a29bfe 100%);
+  --r8:8px;--r12:12px;--r16:16px;--r24:24px;
+  --transition:all .2s cubic-bezier(.4,0,.2,1);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+a{color:var(--accent3);text-decoration:none;transition:var(--transition);}
+a:hover{color:var(--accent2);}
+.gr{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+nav{
+  position:sticky;top:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;background:rgba(3,3,13,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+}
+.nav-logo{font-size:17px;font-weight:900;letter-spacing:-.8px;text-decoration:none;color:var(--text);}
+.nav-links{display:flex;align-items:center;gap:1.75rem;}
+.nav-links a{font-size:13.5px;font-weight:500;color:var(--text2);}
+.nav-links a:hover{color:var(--text);}
+.btn-back{padding:8px 18px;border-radius:var(--r8);font-size:13px;font-weight:600;border:1px solid var(--border2);background:transparent;color:var(--text2);text-decoration:none;transition:var(--transition);}
+.btn-back:hover{color:var(--text);background:var(--bg3);}
+
+.page-hero{padding:4rem 2rem 3rem;max-width:820px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent2);margin-bottom:.75rem;}
+.page-hero h1{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;letter-spacing:-1.5px;margin-bottom:.6rem;}
+.page-hero .meta{font-size:13px;color:var(--text3);font-weight:500;}
+
+.content{max-width:820px;margin:0 auto;padding:0 2rem 5rem;}
+
+.highlight{border-radius:var(--r12);padding:1.25rem 1.5rem;margin-bottom:2.5rem;display:flex;gap:12px;align-items:flex-start;}
+.highlight.green{background:var(--green-bg);border:1px solid var(--green-border);}
+.highlight.gold{background:var(--gold-bg);border:1px solid var(--gold-border);}
+.highlight.red{background:var(--red-bg);border:1px solid var(--red-border);}
+.highlight-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.highlight p{font-size:14px;color:var(--text2);line-height:1.75;}
+.highlight p strong{font-weight:700;}
+.highlight.green p strong{color:var(--green);}
+.highlight.gold p strong{color:var(--gold);}
+.highlight.red p strong{color:var(--red);}
+
+section.legal{margin-bottom:2.75rem;}
+section.legal h2{font-size:17px;font-weight:800;color:var(--text);margin-bottom:.9rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);display:flex;gap:.6rem;align-items:center;}
+.sec-num{font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--text3);background:var(--bg3);padding:3px 8px;border-radius:6px;font-variant-numeric:tabular-nums;}
+section.legal p{font-size:14.5px;color:var(--text2);line-height:1.9;margin-bottom:.75rem;}
+section.legal p:last-child{margin-bottom:0;}
+section.legal ul{list-style:none;margin:.5rem 0;}
+section.legal ul li{font-size:14.5px;color:var(--text2);line-height:1.85;padding:.3rem 0;padding-left:1.25rem;position:relative;}
+section.legal ul li::before{content:'·';position:absolute;left:0;color:var(--text3);}
+section.legal strong{color:var(--text);font-weight:600;}
+
+.steps{display:flex;flex-direction:column;gap:.75rem;margin:.75rem 0;}
+.step{display:flex;gap:14px;align-items:flex-start;padding:1rem 1.25rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r12);}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;margin-top:1px;}
+.step-body{flex:1;}
+.step-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:.25rem;}
+.step-desc{font-size:13.5px;color:var(--text2);line-height:1.7;}
+
+.cta-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r16);padding:2rem;text-align:center;margin-top:2rem;}
+.cta-box h3{font-size:1.1rem;font-weight:800;color:var(--green);margin-bottom:.4rem;}
+.cta-box p{font-size:14px;color:var(--text2);margin-bottom:1rem;}
+.cta-email-btn{display:inline-block;padding:12px 32px;background:var(--grad);color:#fff;border-radius:var(--r12);font-size:14px;font-weight:700;text-decoration:none;transition:var(--transition);box-shadow:0 4px 20px rgba(124,109,250,.25);}
+.cta-email-btn:hover{opacity:.88;color:#fff;transform:translateY(-2px);}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2rem;}
+.footer-inner{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-size:16px;font-weight:900;letter-spacing:-.5px;}
+.footer-links{display:flex;gap:1.25rem;flex-wrap:wrap;}
+.footer-links a{font-size:13px;color:var(--text3);}
+.footer-links a:hover{color:var(--text2);}
+.footer-copy{font-size:12.5px;color:var(--text3);width:100%;text-align:center;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);}
+@media(max-width:700px){
+  nav{padding:0 .875rem;height:52px;}
+  .nav-links{display:none;}
+  .page-hero{padding:4rem .875rem 2.5rem;}
+  .page-hero h1{font-size:1.75rem;letter-spacing:-.5px;}
+  .content{padding:1rem .875rem 4rem;}
+  footer{padding:1.5rem .875rem;}
+  .footer-links{gap:.75rem;}
+  .footer-links a{font-size:12px;}
+  .footer-copy{font-size:11.5px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="typefrompdf.html" class="nav-logo">Type<span class="gr">FromPDF</span></a>
+  <div class="nav-links">
+    <a href="typefrompdf.html#app">Try It</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="typefrompdf.html" class="btn-back">← Back to App</a>
+</nav>
+
+<div class="page-hero">
+  <div class="section-label">Legal</div>
+  <h1>Refund Policy</h1>
+  <p class="meta">Last updated: July 18, 2026 &nbsp;·&nbsp; All plans covered</p>
+</div>
+
+<div class="content">
+
+  <div class="highlight green">
+    <div class="highlight-icon">✓</div>
+    <p><strong>48-hour money-back guarantee:</strong> If you're not satisfied with TypeFromPDF for any reason, email us within 48 hours of your purchase and we will issue a full refund — no questions asked.</p>
+  </div>
+
+  <section class="legal">
+    <h2><span class="sec-num">01</span> Our Commitment</h2>
+    <p>We want you to feel completely confident purchasing a TypeFromPDF subscription. That's why every paid plan — Monthly, Yearly, and Student — comes with a <strong>48-hour full refund guarantee</strong>.</p>
+    <p>If you change your mind for any reason within 48 hours of completing your purchase, we will refund 100% of the amount you paid. No questions, no conditions, no hassle.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">02</span> Eligibility</h2>
+    <p>A refund may be requested if <strong>all</strong> of the following are true:</p>
+    <ul>
+      <li>The refund request is submitted within <strong>48 hours</strong> of the original purchase date and time.</li>
+      <li>Your subscription was purchased directly through TypeFromPDF at typefrompdf.com (via our payment processor, Paddle).</li>
+      <li>You have not previously received a refund for the same subscription or plan type within the last 12 months.</li>
+    </ul>
+    <p>Refund requests made <strong>after 48 hours</strong> of purchase are considered at our sole discretion and are not guaranteed. Exceptional circumstances (e.g., duplicate charges, billing errors by Paddle) will always be investigated and resolved.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">03</span> How to Request a Refund</h2>
+    <p>Requesting a refund is simple. Follow these steps:</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Email us within 48 hours</div>
+          <div class="step-desc">Send an email to <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a> with the subject line <strong>"Refund Request"</strong>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Include your purchase details</div>
+          <div class="step-desc">Please include the email address used to purchase, and optionally the Paddle order ID from your receipt email (e.g., <em>Order #123456</em>).</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">We process within 1 business day</div>
+          <div class="step-desc">We'll confirm your refund and submit it to Paddle within 1 business day. Funds typically appear in 3–10 business days depending on your bank or card issuer.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">04</span> Refund Processing &amp; Timing</h2>
+    <p>All payments and subscriptions are processed by <strong>Paddle</strong> (paddle.com), our payment processor. Once we approve your refund request, we initiate the refund through Paddle. The time for the credit to appear on your statement is determined by your bank or card network, typically:</p>
+    <ul>
+      <li><strong>Credit / debit cards:</strong> 3–10 business days</li>
+      <li><strong>PayPal:</strong> 3–5 business days</li>
+    </ul>
+    <p>You will receive an email confirmation from Paddle when the refund has been issued.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">05</span> Subscription Cancellation</h2>
+    <p>Requesting a refund also cancels your subscription immediately. Your plan will be downgraded to Free upon processing of the refund, and you will lose access to premium features (unlimited PDFs, all 18 programming languages, code file uploads).</p>
+    <p>To cancel your subscription without requesting a refund, you can manage your billing directly at <a href="https://customer.paddle.com" target="_blank" rel="noopener">customer.paddle.com</a>. Cancellation stops future charges but does not trigger a refund for the current billing period.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">06</span> Situations Not Covered</h2>
+    <p>The following are generally not eligible for refunds:</p>
+    <ul>
+      <li>Refund requests made more than 48 hours after purchase (unless exceptional circumstances apply).</li>
+      <li>Accounts that have already received a refund for the same plan within the last 12 months.</li>
+      <li>Subscriptions purchased through third-party platforms (if any) — please refer to that platform's own refund policy.</li>
+    </ul>
+    <p>If you believe you have an exceptional situation (e.g., a double charge, technical error preventing access), please email us and we will always investigate fairly.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">07</span> Contact Us</h2>
+    <p>For refunds, billing questions, or any issues with your subscription:</p>
+    <ul>
+      <li>Email: <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a></li>
+      <li>Contact form: <a href="contact.html">typefrompdf.com/contact</a></li>
+    </ul>
+    <p>We respond to all refund requests within 1 business day (usually much faster).</p>
+  </section>
+
+  <div class="cta-box">
+    <h3>Need a refund?</h3>
+    <p>Email us within 48 hours of your purchase and we'll sort it out right away.</p>
+    <a href="mailto:support@typefrompdf.com?subject=Refund%20Request" class="cta-email-btn">Email support@typefrompdf.com →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Type<span class="gr">FromPDF</span></div>
+    <div class="footer-links">
+      <a href="typefrompdf.html">Home</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="cookies.html">Cookies</a>
+      <a href="refund.html">Refund Policy</a>
+    </div>
+    <p class="footer-copy">© 2026 TypeFromPDF. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

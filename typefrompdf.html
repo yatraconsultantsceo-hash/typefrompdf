@@ -918,7 +918,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
         <ul>
           <li><a href="terms.html">Terms &amp; Conditions</a></li>
           <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="terms.html#refund">Refund Policy</a></li>
+          <li><a href="refund.html">Refund Policy</a></li>
           <li><a href="cookies.html">Cookie Policy</a></li>
         </ul>
       </div>
@@ -928,7 +928,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       <div class="footer-legal">
         <a href="terms.html">Terms</a>
         <a href="privacy.html">Privacy</a>
-        <a href="terms.html#refund">Refund Policy</a>
+        <a href="refund.html">Refund Policy</a>
         <a href="cookies.html">Cookies</a>
         <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a>
       </div>
@@ -1101,7 +1101,7 @@ async function doSignup(){
     btn.disabled=false;btn.textContent='Create Free Account →';
   } else {
     m.textContent='✓ Account created! Redirecting…';m.className='auth-msg ok';
-    setTimeout(()=>{window.location.href='/app';},900);
+    setTimeout(()=>{window.location.href='app.html';},900);
   }
 }
 
@@ -1116,7 +1116,7 @@ async function doLogin(){
     btn.disabled=false;btn.textContent='Log In →';
   } else {
     m.textContent='✓ Welcome back! Redirecting…';m.className='auth-msg ok';
-    setTimeout(()=>{window.location.href='/app';},800);
+    setTimeout(()=>{window.location.href='app.html';},800);
   }
 }
 
@@ -1180,7 +1180,7 @@ function updateNav(){
   const u=Auth.me();
   const nr=$('nav-right');
   if(u){
-    nr.innerHTML=`<div class="nav-user"><button class="nav-profile-btn" onclick="toggleNavDrop(event)" id="nav-profile-btn"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="nav-name">${u.name.split(' ')[0]}</span><span class="nav-chevron">▼</span></button><div class="nav-dropdown" id="nav-dropdown"><div class="nav-dd-email">${u.email}</div><a href="/app" class="nav-dd-item" style="text-decoration:none;">🚀 Open App</a><a href="/dashboard" class="nav-dd-item" style="text-decoration:none;">📊 Dashboard</a><a href="/settings" class="nav-dd-item" style="text-decoration:none;">⚙️ Settings</a><div class="nav-dd-sep"></div><button class="nav-dd-item danger" onclick="doLogout()">🚪 Log Out</button></div></div>`;
+    nr.innerHTML=`<div class="nav-user"><button class="nav-profile-btn" onclick="toggleNavDrop(event)" id="nav-profile-btn"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="nav-name">${u.name.split(' ')[0]}</span><span class="nav-chevron">▼</span></button><div class="nav-dropdown" id="nav-dropdown"><div class="nav-dd-email">${u.email}</div><a href="app.html" class="nav-dd-item" style="text-decoration:none;">🚀 Open App</a><a href="app.html" class="nav-dd-item" style="text-decoration:none;">⚙️ Settings</a><div class="nav-dd-sep"></div><button class="nav-dd-item danger" onclick="doLogout()">🚪 Log Out</button></div></div>`;
   } else {
     nr.innerHTML=`<button class="btn-ghost" onclick="openAuth('li')">Log In</button><button class="btn-nav-cta" onclick="openAuth('su')">Sign Up Free</button>`;
   }
@@ -1421,7 +1421,7 @@ function toggleNavDrop(e){
 }
 function doLogout(){
   Auth.logout();
-  window.location.href='/';
+  window.location.href='typefrompdf.html';
 }
 document.addEventListener('click',()=>{
   const dd=document.getElementById('nav-dropdown');
@@ -1441,7 +1441,7 @@ updateNav();
     // But show "Open App" as primary hero button
     const heroBtns=document.querySelector('.hero-btns');
     if(heroBtns){
-      heroBtns.innerHTML=`<a href="/app" class="btn-primary" style="text-decoration:none;">Start Studying Free →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
+      heroBtns.innerHTML=`<a href="app.html" class="btn-primary" style="text-decoration:none;">Open Workspace →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
     }
   }
 })();
