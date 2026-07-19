@@ -216,6 +216,14 @@ input,textarea{font-family:'Inter',sans-serif;}
 /* MODALS */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:900;display:flex;align-items:center;justify-content:center;padding:1rem;}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r24);padding:2rem;width:100%;max-width:420px;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.7);}
+.modal-backdrop:not(.hidden) .modal{animation:modalIn .18s cubic-bezier(.4,0,.2,1);}
+@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+/* Delete confirm modal buttons */
+.del-btn-row{display:flex;gap:.75rem;margin-top:1.5rem;}
+.del-btn-cancel{flex:1;padding:11px;border-radius:var(--r8);background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:13.5px;font-weight:600;cursor:pointer;transition:var(--transition);}
+.del-btn-cancel:hover{border-color:var(--border3);color:var(--text);}
+.del-btn-confirm{flex:1;padding:11px;border-radius:var(--r8);background:var(--red-bg);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;font-size:13.5px;font-weight:700;cursor:pointer;transition:var(--transition);}
+.del-btn-confirm:hover{background:rgba(255,107,107,.18);}
 .modal-x{position:absolute;top:1rem;right:1rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r8);color:var(--text3);font-size:14px;padding:6px 9px;line-height:1;transition:var(--transition);}
 .modal-x:hover{color:var(--text);}
 .modal h2{font-size:19px;font-weight:800;letter-spacing:-.4px;margin-bottom:.3rem;}
@@ -543,6 +551,20 @@ input,textarea{font-family:'Inter',sans-serif;}
   </div>
 </div>
 
+<!-- DELETE CONFIRM MODAL -->
+<div id="del-modal" class="modal-backdrop hidden" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="modal" style="max-width:380px;">
+    <div style="font-size:32px;margin-bottom:.75rem;">🗑️</div>
+    <h2 id="del-modal-title">Delete Session?</h2>
+    <p class="modal-sub" id="del-modal-session-name" style="font-weight:700;color:var(--text);font-size:14px;margin-bottom:.5rem;"></p>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.7;">Are you sure you want to delete this session? This action cannot be undone.</p>
+    <div class="del-btn-row">
+      <button class="del-btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+      <button class="del-btn-confirm" id="del-btn-confirm" onclick="confirmDeleteModal()">Delete</button>
+    </div>
+  </div>
+</div>
+
 <!-- SESSION DROPDOWN MENU -->
 <div id="sess-dropdown" class="sess-dropdown hidden">
   <button onclick="sessMenuAction('rename')">✏️ Rename</button>
@@ -633,12 +655,58 @@ function saveSession(name,type,pages){
   loadHistory();
 }
 
+// Update the current open session instead of creating a new one.
+// Only falls back to creating a new session if none is open.
+function updateOrCreateSession(name,type,pages){
+  if(_currentSessionId){
+    const sessions=getSessions();
+    const s=sessions.find(s=>s.id===_currentSessionId);
+    if(s){
+      s.name=name;s.type=type;s.pages=pages||[];s.date=Date.now();
+      delete s.progress; // reset progress when content changes
+      setSessions(sessions);
+      $('session-label').textContent=name;
+      loadHistory();
+      return;
+    }
+  }
+  // No active session — create one
+  $('session-label').textContent=name;
+  saveSession(name,type,pages);
+}
+
+// Switch language within current session (never creates a new session).
+function loadLanguage(l){
+  if(_currentSessionId){
+    const sessions=getSessions();
+    const s=sessions.find(s=>s.id===_currentSessionId);
+    if(s){
+      const hasProgress=s.progress&&s.progress.typed&&s.progress.typed.length>0;
+      s.name=l.name;s.type='code';s.lang=l.name;s.pages=[l.code];s.date=Date.now();
+      if(!hasProgress)delete s.progress; // keep progress only if user had typed something
+      setSessions(sessions);
+      $('session-label').textContent=l.name;
+      loadText([l.code],false);
+      loadHistory();
+      return;
+    }
+  }
+  // No session yet — create first one
+  $('session-label').textContent=l.name;
+  saveSession(l.name,'code',[l.code]);
+  loadText([l.code],false);
+}
+
 function saveProgress(){
   if(!_currentSessionId)return;
   const sessions=getSessions();
   const idx=sessions.findIndex(s=>s.id===_currentSessionId);
   if(idx===-1)return;
+  const wpm=parseInt($('s-wpm').textContent)||0;
+  const acc=$('s-acc').textContent||'—';
   sessions[idx].progress={page:currentPage,typed:$('typing-input').value};
+  sessions[idx].lastModified=Date.now();
+  if(wpm>0){sessions[idx].wpm=wpm;sessions[idx].accuracy=acc;}
   setSessions(sessions);
 }
 
@@ -711,6 +779,13 @@ function openSession(id){
         inp.dispatchEvent(new Event('input'));
       }
     }
+    // Highlight the matching language button for code sessions
+    if(s.type==='code'&&s.lang){
+      document.querySelectorAll('.prog-btn').forEach(b=>{
+        const nm=b.querySelector('.prog-name');
+        b.classList.toggle('active',nm&&nm.textContent===s.lang);
+      });
+    }
   }
   loadHistory();
   closeSidebar();
@@ -730,13 +805,16 @@ function renameSession(id){
 
 function deleteSession(id){
   const sessions=getSessions();
-  const idx=sessions.findIndex(s=>s.id===id);
-  if(idx===-1)return;
-  if(!confirm('Delete "'+sessions[idx].name+'"?\nThis cannot be undone.'))return;
-  sessions.splice(idx,1);
-  setSessions(sessions);
-  if(_currentSessionId===id){_currentSessionId=null;startNewSession();}
-  loadHistory();
+  const s=sessions.find(s=>s.id===id);
+  if(!s)return;
+  openDeleteModal('"'+s.name+'"',()=>{
+    const ss=getSessions();
+    const idx=ss.findIndex(s=>s.id===id);
+    if(idx!==-1)ss.splice(idx,1);
+    setSessions(ss);
+    if(_currentSessionId===id){_currentSessionId=null;startNewSession();}
+    loadHistory();
+  });
 }
 
 // ── SESSION DROPDOWN MENU ──
@@ -778,13 +856,26 @@ document.addEventListener('click',function(e){
 function clearAllSessions(){
   const sessions=getSessions();
   if(!sessions.length)return;
-  if(!confirm('Delete all '+sessions.length+' sessions?\nThis cannot be undone.'))return;
-  localStorage.removeItem('tfp_sessions');
-  _currentSessionId=null;
-  _searchQuery='';
-  const srch=$('sb-search');if(srch)srch.value='';
-  startNewSession();
+  openDeleteModal('All '+sessions.length+' sessions will be permanently deleted.',()=>{
+    localStorage.removeItem('tfp_sessions');
+    _currentSessionId=null;
+    startNewSession();
+  },'Delete All');
 }
+
+// ── DELETE MODAL ──
+let _deleteCallback=null;
+
+function openDeleteModal(sessionLabel,onConfirm,btnLabel){
+  $('del-modal-title').textContent=btnLabel==='Delete All'?'Clear All Sessions?':'Delete Session?';
+  $('del-modal-session-name').textContent=sessionLabel;
+  $('del-btn-confirm').textContent=btnLabel||'Delete';
+  _deleteCallback=onConfirm;
+  $('del-modal').classList.remove('hidden');
+}
+function closeDeleteModal(){$('del-modal').classList.add('hidden');_deleteCallback=null;}
+function confirmDeleteModal(){const cb=_deleteCallback;closeDeleteModal();if(cb)cb();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDeleteModal();closeSessMenu();}});
 
 // ── SUBSCRIPTION STATUS ──
 function getSubInfo(){
@@ -915,8 +1006,7 @@ function handlePDF(file){
       }
       if(!pgs.length){setStatus('No readable text found. This PDF may be image-based or scanned.');return;}
       setStatus('');
-      $('session-label').textContent=name;
-      saveSession(name,'pdf',pgs);
+      updateOrCreateSession(name,'pdf',pgs);
       loadText(pgs,pgs.length>1);
       setTimeout(()=>$('typing-section').scrollIntoView({behavior:'smooth',block:'start'}),200);
     }catch(e){setStatus('Could not read this PDF. Please try another file.');}
@@ -958,9 +1048,8 @@ function buildProgGrid(){
       if(!l.free&&!Auth.isPaid()){openUpgrade();return;}
       document.querySelectorAll('.prog-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      $('session-label').textContent=l.name+' practice';
-      saveSession(l.name,'code',[l.code]);
-      loadText([l.code],false);
+      showWorkspace('code');
+      loadLanguage(l);
     };
     grid.appendChild(btn);
   });
@@ -970,8 +1059,7 @@ function togglePaste(){$('paste-panel').classList.toggle('hidden');}
 function loadPasted(){
   const code=$('paste-inp').value.trim();if(!code)return;
   $('paste-panel').classList.add('hidden');
-  $('session-label').textContent='Custom code';
-  saveSession('Custom code','code',[code]);
+  updateOrCreateSession('Custom code','code',[code]);
   loadText([code],false);
 }
 
@@ -981,8 +1069,7 @@ $('code-file-inp').addEventListener('change',e=>{
   const r=new FileReader();
   r.onload=ev=>{
     const name=file.name.slice(0,28);
-    $('session-label').textContent=name;
-    saveSession(name,'code',[ev.target.result]);
+    updateOrCreateSession(name,'code',[ev.target.result]);
     loadText([ev.target.result],false);
   };
   r.readAsText(file);
@@ -996,8 +1083,7 @@ const SAMPLES=[
 let sampleIdx=0;
 function loadSample(){
   const text=SAMPLES[sampleIdx%SAMPLES.length];sampleIdx++;
-  $('session-label').textContent='Sample text';
-  saveSession('Sample text','pdf',[text]);
+  updateOrCreateSession('Sample text','pdf',[text]);
   loadText([text],false);
   setTimeout(()=>$('typing-section').scrollIntoView({behavior:'smooth',block:'start'}),150);
 }
