@@ -758,7 +758,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
 
 <!-- TOP BANNER -->
 <div class="top-banner">
-  🎓 Student Plan: $49/year — Less than $4/month · Yearly only.<a href="pricing.html">Verify your .edu email →</a>
+  🎓 Student Plan: $49/year — Less than $4/month · Yearly only.<a href="/pricing">Verify your .edu email →</a>
 </div>
 
 <!-- AUTH MODAL -->
@@ -846,7 +846,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       <li>Priority email support</li>
       <li>Early access to new features</li>
     </ul>
-    <button class="form-btn" onclick="closeUpgrade();window.location.href='pricing.html'">View Pricing Plans →</button>
+    <button class="form-btn" onclick="closeUpgrade();window.location.href='/pricing'">View Pricing Plans →</button>
   </div>
 </div>
 
@@ -878,9 +878,9 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
     <a href="#features">Features</a>
     <a href="#how">How It Works</a>
     <a href="#app">Try It</a>
-    <a href="pricing.html">Pricing</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
   </div>
   <div class="nav-right" id="nav-right">
     <button class="btn-ghost" onclick="openAuth('li')">Log In</button>
@@ -1114,7 +1114,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       <button class="pm-cta outline" onclick="openPaddleCheckout('monthly')">Get Monthly →</button>
     </div>
   </div>
-  <p class="pricing-more">See the full feature comparison → <a href="pricing.html">View all plans</a></p>
+  <p class="pricing-more">See the full feature comparison → <a href="/pricing">View all plans</a></p>
 </section>
 
 <!-- CTA -->
@@ -1141,33 +1141,33 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
           <li><a href="#features">Features</a></li>
           <li><a href="#how">How It Works</a></li>
           <li><a href="#app">Try It Free</a></li>
-          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="/pricing">Pricing</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Company</h4>
         <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
         <ul>
-          <li><a href="terms.html">Terms &amp; Conditions</a></li>
-          <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="refund.html">Refund Policy</a></li>
-          <li><a href="cookies.html">Cookie Policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/refund-policy">Refund Policy</a></li>
+          <li><a href="/cookie-policy">Cookie Policy</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <p class="footer-copy">© 2026 TypeFromPDF. Built for learners and builders everywhere.</p>
       <div class="footer-legal">
-        <a href="terms.html">Terms</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="refund.html">Refund Policy</a>
-        <a href="cookies.html">Cookies</a>
+        <a href="/terms-and-conditions">Terms</a>
+        <a href="/privacy-policy">Privacy</a>
+        <a href="/refund-policy">Refund Policy</a>
+        <a href="/cookie-policy">Cookies</a>
         <a href="mailto:support@typefrompdf.com">support@typefrompdf.com</a>
       </div>
     </div>
@@ -1245,7 +1245,7 @@ const Auth={
   },
   async logout(){await getSb().auth.signOut();_currentUser=null;},
   async sendPasswordReset(email){
-    const{error}=await getSb().auth.resetPasswordForEmail(email,{redirectTo:'https://typefrompdf.com/typefrompdf.html'});
+    const{error}=await getSb().auth.resetPasswordForEmail(email,{redirectTo:'https://typefrompdf.com/'});
     if(error)throw error;
   },
   async updatePassword(newPass){
@@ -1371,7 +1371,7 @@ async function doSignup(){
     btn.disabled=false;btn.textContent='Create Free Account →';
   } else {
     m.textContent='✓ Account created! Redirecting…';m.className='auth-msg ok';
-    setTimeout(()=>{window.location.href='app.html';},900);
+    setTimeout(()=>{window.location.href='/app';},900);
   }
 }
 
@@ -1386,7 +1386,7 @@ async function doLogin(){
     btn.disabled=false;btn.textContent='Log In →';
   } else {
     m.textContent='✓ Welcome back! Redirecting…';m.className='auth-msg ok';
-    setTimeout(()=>{window.location.href='app.html';},800);
+    setTimeout(()=>{window.location.href='/app';},800);
   }
 }
 
@@ -1416,7 +1416,7 @@ async function doResetPassword(){
   try{
     await Auth.updatePassword(p1);
     msg.textContent='✓ Password updated! Redirecting…';msg.className='auth-msg ok';
-    setTimeout(()=>{closeAuth();window.location.href='app.html';},1500);
+    setTimeout(()=>{closeAuth();window.location.href='/app';},1500);
   }catch(e){
     msg.textContent='Failed to update. Please try again.';msg.className='auth-msg err';
   }
@@ -1426,7 +1426,7 @@ function updateNav(){
   const u=Auth.me();
   const nr=$('nav-right');
   if(u){
-    nr.innerHTML=`<div class="nav-user"><button class="nav-profile-btn" onclick="toggleNavDrop(event)" id="nav-profile-btn"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="nav-name">${u.name.split(' ')[0]}</span><span class="nav-chevron">▼</span></button><div class="nav-dropdown" id="nav-dropdown"><div class="nav-dd-email">${u.email}</div><a href="app.html" class="nav-dd-item" style="text-decoration:none;">🚀 Open App</a><a href="app.html" class="nav-dd-item" style="text-decoration:none;">⚙️ Settings</a><div class="nav-dd-sep"></div><button class="nav-dd-item danger" onclick="doLogout()">🚪 Log Out</button></div></div>`;
+    nr.innerHTML=`<div class="nav-user"><button class="nav-profile-btn" onclick="toggleNavDrop(event)" id="nav-profile-btn"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="nav-name">${u.name.split(' ')[0]}</span><span class="nav-chevron">▼</span></button><div class="nav-dropdown" id="nav-dropdown"><div class="nav-dd-email">${u.email}</div><a href="/app" class="nav-dd-item" style="text-decoration:none;">🚀 Open App</a><a href="/app" class="nav-dd-item" style="text-decoration:none;">⚙️ Settings</a><div class="nav-dd-sep"></div><button class="nav-dd-item danger" onclick="doLogout()">🚪 Log Out</button></div></div>`;
   } else {
     nr.innerHTML=`<button class="btn-ghost" onclick="openAuth('li')">Log In</button><button class="btn-nav-cta" onclick="openAuth('su')">Sign Up Free</button>`;
   }
@@ -1667,7 +1667,7 @@ function toggleNavDrop(e){
 }
 async function doLogout(){
   await Auth.logout();
-  window.location.href='typefrompdf.html';
+  window.location.href='/';
 }
 document.addEventListener('click',()=>{
   const dd=document.getElementById('nav-dropdown');
@@ -1685,7 +1685,7 @@ buildProgGrid();
   if(u){
     const heroBtns=document.querySelector('.hero-btns');
     if(heroBtns){
-      heroBtns.innerHTML=`<a href="app.html" class="btn-primary" style="text-decoration:none;">Open Workspace →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
+      heroBtns.innerHTML=`<a href="/app" class="btn-primary" style="text-decoration:none;">Open Workspace →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
     }
   }
   // Handle ?openAuth= URL param

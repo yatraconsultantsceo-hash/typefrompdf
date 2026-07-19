@@ -306,7 +306,7 @@ input,textarea{font-family:'Inter',sans-serif;}
 <aside class="sidebar" id="sidebar">
   <div class="sb-top">
     <div class="sb-logo">
-      <a href="typefrompdf.html">Type<span class="gr">FromPDF</span></a>
+      <a href="/">Type<span class="gr">FromPDF</span></a>
     </div>
     <button class="sb-new-btn" onclick="startNewSession()">＋ New Session</button>
     <div class="sb-mode-btns">
@@ -332,8 +332,8 @@ input,textarea{font-family:'Inter',sans-serif;}
     </div>
     <div class="sb-actions">
       <button class="sb-action-btn" onclick="openSettings()">⚙️ Settings</button>
-      <a href="pricing.html" class="sb-action-btn">💳 Pricing</a>
-      <a href="typefrompdf.html" class="sb-action-btn">🏠 Home</a>
+      <a href="/pricing" class="sb-action-btn">💳 Pricing</a>
+      <a href="/" class="sb-action-btn">🏠 Home</a>
       <button class="sb-action-btn danger" onclick="doLogout()">🚪 Log Out</button>
     </div>
   </div>
@@ -482,7 +482,7 @@ input,textarea{font-family:'Inter',sans-serif;}
       </div>
     </div>
     <button class="form-btn" onclick="closeUpgrade();openPaddleCheckout('monthly')">Monthly — $17/month</button>
-    <div style="text-align:center;margin-top:.75rem;"><a href="pricing.html" style="font-size:12.5px;color:var(--accent3);">Compare all plans →</a></div>
+    <div style="text-align:center;margin-top:.75rem;"><a href="/pricing" style="font-size:12.5px;color:var(--accent3);">Compare all plans →</a></div>
   </div>
 </div>
 
@@ -549,7 +549,7 @@ const Auth={
 (async function(){
   const sb=getSb();
   const{data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='typefrompdf.html';return;}
+  if(!session){window.location.href='/';return;}
   const{data:prof}=await sb.from('profiles').select('*').eq('id',session.user.id).single();
   _currentUser=prof?{...prof,email:session.user.email}:{name:'User',email:session.user.email,plan:'free'};
   const u=_currentUser;
@@ -864,7 +864,7 @@ async function doChangePassword(){
   }
 }
 
-async function doLogout(){await Auth.logout();window.location.href='typefrompdf.html';}
+async function doLogout(){await Auth.logout();window.location.href='/';}
 
 // ── INIT ──
 buildProgGrid();

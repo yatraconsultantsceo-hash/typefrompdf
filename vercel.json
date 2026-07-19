@@ -1,11 +1,33 @@
 {
+  "redirects": [
+    { "source": "/typefrompdf.html",  "destination": "/",                    "permanent": true },
+    { "source": "/pricing.html",      "destination": "/pricing",             "permanent": true },
+    { "source": "/about.html",        "destination": "/about",               "permanent": true },
+    { "source": "/contact.html",      "destination": "/contact",             "permanent": true },
+    { "source": "/privacy.html",      "destination": "/privacy-policy",      "permanent": true },
+    { "source": "/terms.html",        "destination": "/terms-and-conditions","permanent": true },
+    { "source": "/cookies.html",      "destination": "/cookie-policy",       "permanent": true },
+    { "source": "/refund.html",       "destination": "/refund-policy",       "permanent": true },
+    { "source": "/app.html",          "destination": "/app",                 "permanent": true },
+    { "source": "/success.html",      "destination": "/success",             "permanent": true },
+    { "source": "/cancel.html",       "destination": "/cancel",              "permanent": true },
+    { "source": "/dashboard.html",    "destination": "/dashboard",           "permanent": true },
+    { "source": "/settings.html",     "destination": "/settings",            "permanent": true }
+  ],
   "rewrites": [
-    { "source": "/",          "destination": "/typefrompdf.html" },
-    { "source": "/app",       "destination": "/app.html" },
-    { "source": "/success",   "destination": "/success.html" },
-    { "source": "/cancel",    "destination": "/cancel.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/settings",  "destination": "/settings.html" }
+    { "source": "/",                     "destination": "/typefrompdf.html" },
+    { "source": "/pricing",              "destination": "/pricing.html" },
+    { "source": "/about",               "destination": "/about.html" },
+    { "source": "/contact",             "destination": "/contact.html" },
+    { "source": "/privacy-policy",      "destination": "/privacy.html" },
+    { "source": "/terms-and-conditions","destination": "/terms.html" },
+    { "source": "/cookie-policy",       "destination": "/cookies.html" },
+    { "source": "/refund-policy",       "destination": "/refund.html" },
+    { "source": "/app",                 "destination": "/app.html" },
+    { "source": "/success",             "destination": "/success.html" },
+    { "source": "/cancel",              "destination": "/cancel.html" },
+    { "source": "/dashboard",           "destination": "/dashboard.html" },
+    { "source": "/settings",            "destination": "/settings.html" }
   ],
   "headers": [
     {

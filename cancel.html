@@ -115,7 +115,7 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:.5rem;}
 function retryPayment(){
   const u=JSON.parse(localStorage.getItem('tfp_c')||'null');
   if(!u){window.location.href='/';return;}
-  if(typeof Paddle==='undefined'){window.location.href='/pricing.html';return;}
+  if(typeof Paddle==='undefined'){window.location.href='/pricing';return;}
   Paddle.Checkout.open({
     items:[{priceId:'pri_01kxnqmy747shff8effyxaqnch',quantity:1}],
     customer:{email:u.email},
