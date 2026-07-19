@@ -67,11 +67,19 @@ input,textarea{font-family:'Inter',sans-serif;}
 .sb-divider{height:1px;background:var(--border);margin:.5rem 1rem;}
 .sb-section-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:0 1rem;margin:.5rem 0 .35rem;}
 .sb-history{flex:1;overflow-y:auto;padding:0 .5rem;}
-.sb-hist-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r8);cursor:pointer;transition:var(--transition);}
+.sb-hist-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r8);cursor:pointer;transition:var(--transition);position:relative;}
 .sb-hist-item:hover{background:var(--bg3);}
+.sb-hist-item.active{background:var(--accent-bg);}
+.sb-hist-item.active .sb-hist-name{color:var(--accent3);}
 .sb-hist-icon{font-size:13px;flex-shrink:0;color:var(--text3);}
 .sb-hist-name{font-size:12.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
-.sb-hist-date{font-size:10px;color:var(--text3);}
+.sb-hist-date{font-size:10px;color:var(--text3);flex-shrink:0;}
+.sb-hist-actions{display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);align-items:center;gap:1px;background:var(--bg3);}
+.sb-hist-item:hover .sb-hist-actions{display:flex;}
+.sb-hist-item:hover .sb-hist-date{visibility:hidden;}
+.sb-hist-act{background:transparent;border:none;color:var(--text3);font-size:11px;padding:3px 5px;border-radius:4px;cursor:pointer;line-height:1;transition:var(--transition);}
+.sb-hist-act:hover{background:var(--bg4);color:var(--text);}
+.sb-hist-act.del:hover{color:var(--red);}
 .sb-empty-hist{padding:8px 12px;font-size:12px;color:var(--text3);font-style:italic;}
 .sb-bottom{padding:.75rem;border-top:1px solid var(--border);}
 .sb-user{display:flex;align-items:center;gap:9px;padding:8px;border-radius:var(--r8);margin-bottom:.5rem;}
@@ -572,23 +580,98 @@ const Auth={
 })();
 
 // ── SESSION HISTORY ──
-function saveSession(name,type){
-  const sessions=JSON.parse(localStorage.getItem('tfp_sessions')||'[]');
-  sessions.unshift({name:name,type:type,date:Date.now()});
-  if(sessions.length>20)sessions.pop();
-  localStorage.setItem('tfp_sessions',JSON.stringify(sessions));
+let _currentSessionId=null;
+let _saveProgressTimer=null;
+
+function generateId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function getSessions(){return JSON.parse(localStorage.getItem('tfp_sessions')||'[]');}
+function setSessions(s){localStorage.setItem('tfp_sessions',JSON.stringify(s));}
+
+function saveSession(name,type,pages){
+  const sessions=getSessions();
+  const id=generateId();
+  _currentSessionId=id;
+  sessions.unshift({id,name,type,date:Date.now(),pages:pages||[]});
+  if(sessions.length>30)sessions.pop();
+  setSessions(sessions);
   loadHistory();
 }
+
+function saveProgress(){
+  if(!_currentSessionId)return;
+  const sessions=getSessions();
+  const idx=sessions.findIndex(s=>s.id===_currentSessionId);
+  if(idx===-1)return;
+  sessions[idx].progress={page:currentPage,typed:$('typing-input').value};
+  setSessions(sessions);
+}
+
 function loadHistory(){
-  const sessions=JSON.parse(localStorage.getItem('tfp_sessions')||'[]');
+  const sessions=getSessions();
   const el=$('sb-history');
   if(!sessions.length){el.innerHTML='<div class="sb-empty-hist">No sessions yet. Start typing!</div>';return;}
-  el.innerHTML=sessions.slice(0,12).map(s=>{
+  el.innerHTML=sessions.slice(0,25).map(s=>{
     const d=new Date(s.date);
     const label=d.toLocaleDateString('en',{month:'short',day:'numeric'});
     const icon=s.type==='code'?'💻':'📄';
-    return `<div class="sb-hist-item" title="${s.name}"><span class="sb-hist-icon">${icon}</span><span class="sb-hist-name">${s.name}</span><span class="sb-hist-date">${label}</span></div>`;
+    const active=s.id===_currentSessionId?' active':'';
+    const nm=s.name.replace(/"/g,'&quot;');
+    return `<div class="sb-hist-item${active}" onclick="openSession('${s.id}')" title="${nm}">
+      <span class="sb-hist-icon">${icon}</span>
+      <span class="sb-hist-name">${s.name}</span>
+      <span class="sb-hist-date">${label}</span>
+      <span class="sb-hist-actions">
+        <button class="sb-hist-act" onclick="event.stopPropagation();renameSession('${s.id}')" title="Rename">✏</button>
+        <button class="sb-hist-act del" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete">✕</button>
+      </span>
+    </div>`;
   }).join('');
+}
+
+function openSession(id){
+  const sessions=getSessions();
+  const s=sessions.find(s=>s.id===id);
+  if(!s)return;
+  _currentSessionId=id;
+  showWorkspace(s.type);
+  $('session-label').textContent=s.name;
+  if(s.pages&&s.pages.length){
+    loadText(s.pages,s.pages.length>1);
+    if(s.progress){
+      currentPage=s.progress.page||0;
+      renderPage();
+      if(s.progress.typed){
+        const inp=$('typing-input');
+        inp.value=s.progress.typed;
+        inp.dispatchEvent(new Event('input'));
+      }
+    }
+  }
+  loadHistory();
+  closeSidebar();
+}
+
+function renameSession(id){
+  const sessions=getSessions();
+  const s=sessions.find(s=>s.id===id);
+  if(!s)return;
+  const newName=prompt('Rename session:',s.name);
+  if(!newName||!newName.trim())return;
+  s.name=newName.trim().slice(0,50);
+  setSessions(sessions);
+  if(_currentSessionId===id)$('session-label').textContent=s.name;
+  loadHistory();
+}
+
+function deleteSession(id){
+  const sessions=getSessions();
+  const idx=sessions.findIndex(s=>s.id===id);
+  if(idx===-1)return;
+  if(!confirm('Delete "'+sessions[idx].name+'"?'))return;
+  sessions.splice(idx,1);
+  setSessions(sessions);
+  if(_currentSessionId===id){_currentSessionId=null;startNewSession();}
+  loadHistory();
 }
 
 // ── WORKSPACE / MODES ──
@@ -601,10 +684,12 @@ function showWorkspace(mode){
   closeSidebar();
 }
 function startNewSession(){
+  _currentSessionId=null;
   $('welcome-state').classList.remove('hidden');
   $('workspace').classList.add('hidden');
   $('session-label').textContent='Ready to type';
   resetTyping();
+  loadHistory();
   closeSidebar();
 }
 function switchMode(mode){
@@ -652,7 +737,7 @@ function handlePDF(file){
       if(!pgs.length){setStatus('No readable text found. This PDF may be image-based or scanned.');return;}
       setStatus('');
       $('session-label').textContent=name;
-      saveSession(name,'pdf');
+      saveSession(name,'pdf',pgs);
       loadText(pgs,pgs.length>1);
       setTimeout(()=>$('typing-section').scrollIntoView({behavior:'smooth',block:'start'}),200);
     }catch(e){setStatus('Could not read this PDF. Please try another file.');}
@@ -694,7 +779,7 @@ function buildProgGrid(){
       document.querySelectorAll('.prog-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       $('session-label').textContent=l.name+' practice';
-      saveSession(l.name,'code');
+      saveSession(l.name,'code',[l.code]);
       loadText([l.code],false);
     };
     grid.appendChild(btn);
@@ -706,7 +791,7 @@ function loadPasted(){
   const code=$('paste-inp').value.trim();if(!code)return;
   $('paste-panel').classList.add('hidden');
   $('session-label').textContent='Custom code';
-  saveSession('Custom code','code');
+  saveSession('Custom code','code',[code]);
   loadText([code],false);
 }
 
@@ -717,7 +802,7 @@ $('code-file-inp').addEventListener('change',e=>{
   r.onload=ev=>{
     const name=file.name.slice(0,28);
     $('session-label').textContent=name;
-    saveSession(name,'code');
+    saveSession(name,'code',[ev.target.result]);
     loadText([ev.target.result],false);
   };
   r.readAsText(file);
@@ -732,7 +817,7 @@ let sampleIdx=0;
 function loadSample(){
   const text=SAMPLES[sampleIdx%SAMPLES.length];sampleIdx++;
   $('session-label').textContent='Sample text';
-  saveSession('Sample text','pdf');
+  saveSession('Sample text','pdf',[text]);
   loadText([text],false);
   setTimeout(()=>$('typing-section').scrollIntoView({behavior:'smooth',block:'start'}),150);
 }
@@ -805,6 +890,9 @@ $('typing-input').addEventListener('input',function(){
     $('cb-wpm-val').textContent=w||'—';
     $('completion-banner').classList.add('show');
   }
+  // Auto-save progress locally (debounced)
+  clearTimeout(_saveProgressTimer);
+  _saveProgressTimer=setTimeout(saveProgress,1500);
 });
 
 function updateWPM(){
