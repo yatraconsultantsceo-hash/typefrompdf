@@ -12,8 +12,7 @@
     { "source": "/success.html",      "destination": "/success",             "permanent": true },
     { "source": "/cancel.html",       "destination": "/cancel",              "permanent": true },
     { "source": "/dashboard.html",    "destination": "/dashboard",           "permanent": true },
-    { "source": "/settings.html",     "destination": "/settings",            "permanent": true },
-    { "source": "/ugc.html",          "destination": "/creator-rewards",     "permanent": true }
+    { "source": "/settings.html",     "destination": "/settings",            "permanent": true }
   ],
   "rewrites": [
     { "source": "/",                     "destination": "/typefrompdf.html" },
@@ -28,8 +27,7 @@
     { "source": "/success",             "destination": "/success.html" },
     { "source": "/cancel",              "destination": "/cancel.html" },
     { "source": "/dashboard",           "destination": "/dashboard.html" },
-    { "source": "/settings",            "destination": "/settings.html" },
-    { "source": "/creator-rewards",     "destination": "/ugc.html" }
+    { "source": "/settings",            "destination": "/settings.html" }
   ],
   "headers": [
     {

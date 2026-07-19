@@ -424,7 +424,7 @@ input,textarea{font-family:'Inter',sans-serif;}
           <span class="u-icon">📂</span>
           <h3>Drop your PDF here</h3>
           <p>or click to browse your files</p>
-          <p class="u-note">Processed 100% in your browser — your document never leaves your device</p>
+          <p class="u-note">🔒 Your files never leave your device. Everything is stored securely in your browser.</p>
           <span class="try-sample" onclick="event.stopPropagation();loadSample()">✦ Try a sample text</span>
         </div>
         <div id="status-msg"></div>
@@ -650,7 +650,7 @@ function saveSession(name,type,pages){
   const id=generateId();
   _currentSessionId=id;
   sessions.unshift({id,name,type,date:Date.now(),pages:pages||[]});
-  if(sessions.length>50)sessions.pop();
+  while(sessions.length>10)sessions.pop(); // keep max 10 sessions, auto-remove oldest
   setSessions(sessions);
   loadHistory();
 }
@@ -677,13 +677,14 @@ function updateOrCreateSession(name,type,pages){
 
 // Switch language within current session (never creates a new session).
 function loadLanguage(l){
+  const displayName=l.name+' Practice';
   if(_currentSessionId){
     const sessions=getSessions();
     const s=sessions.find(s=>s.id===_currentSessionId);
     if(s){
-      const hasProgress=s.progress&&s.progress.typed&&s.progress.typed.length>0;
-      s.name=l.name;s.type='code';s.lang=l.name;s.pages=[l.code];s.date=Date.now();
-      if(!hasProgress)delete s.progress; // keep progress only if user had typed something
+      s.name=displayName;s.type='code';s.lang=l.name;
+      s.pages=[l.code];s.date=Date.now();
+      delete s.progress; // fresh start when switching language
       setSessions(sessions);
       $('session-label').textContent=l.name;
       loadText([l.code],false);
@@ -693,7 +694,7 @@ function loadLanguage(l){
   }
   // No session yet — create first one
   $('session-label').textContent=l.name;
-  saveSession(l.name,'code',[l.code]);
+  saveSession(displayName,'code',[l.code]);
   loadText([l.code],false);
 }
 
@@ -812,8 +813,18 @@ function deleteSession(id){
     const idx=ss.findIndex(s=>s.id===id);
     if(idx!==-1)ss.splice(idx,1);
     setSessions(ss);
-    if(_currentSessionId===id){_currentSessionId=null;startNewSession();}
-    loadHistory();
+    if(_currentSessionId===id){
+      const remaining=getSessions();
+      if(remaining.length>0){
+        // Auto-open the next available session
+        openSession(remaining[0].id);
+      } else {
+        _currentSessionId=null;
+        startNewSession();
+      }
+    } else {
+      loadHistory();
+    }
   });
 }
 
@@ -1048,7 +1059,16 @@ function buildProgGrid(){
       if(!l.free&&!Auth.isPaid()){openUpgrade();return;}
       document.querySelectorAll('.prog-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      showWorkspace('code');
+      // Show workspace without resetting if already visible
+      $('welcome-state').classList.add('hidden');
+      $('workspace').classList.remove('hidden');
+      $('pdf-mode').classList.add('hidden');
+      $('code-mode').classList.remove('hidden');
+      $('sbm-pdf').classList.remove('active');
+      $('sbm-code').classList.add('active');
+      $('tab-pdf').classList.remove('active');
+      $('tab-code').classList.add('active');
+      currentMode='code';
       loadLanguage(l);
     };
     grid.appendChild(btn);
