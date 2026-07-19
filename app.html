@@ -81,6 +81,27 @@ input,textarea{font-family:'Inter',sans-serif;}
 .sb-hist-act:hover{background:var(--bg4);color:var(--text);}
 .sb-hist-act.del:hover{color:var(--red);}
 .sb-empty-hist{padding:8px 12px;font-size:12px;color:var(--text3);font-style:italic;}
+.sb-search-wrap{padding:.4rem .75rem .25rem;}
+.sb-search{width:100%;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);color:var(--text);font-size:12px;outline:none;transition:var(--transition);}
+.sb-search::placeholder{color:var(--text3);}
+.sb-search:focus{border-color:var(--accent);}
+.sb-group-lbl{font-size:9.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:7px 10px 2px;margin-top:2px;}
+.sb-hist-clear{display:flex;align-items:center;justify-content:center;gap:5px;width:calc(100% - 1rem);margin:.25rem .5rem 0;padding:6px;border-radius:var(--r8);background:transparent;border:none;color:var(--text3);font-size:11.5px;cursor:pointer;transition:var(--transition);}
+.sb-hist-clear:hover{color:var(--red);background:var(--red-bg);}
+.sub-days{font-size:9.5px;color:var(--text3);font-weight:600;margin-top:2px;}
+.sub-days.warn{color:var(--gold);}
+.sub-days.danger{color:var(--red);}
+/* Subscription card in settings */
+.sub-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r12);padding:.875rem 1rem;margin-bottom:.25rem;}
+.sub-row{display:flex;justify-content:space-between;align-items:center;padding:.3rem 0;border-bottom:1px solid var(--border);}
+.sub-row:last-child{border-bottom:none;}
+.sub-key{font-size:12px;color:var(--text3);font-weight:600;}
+.sub-val{font-size:12.5px;color:var(--text);font-weight:700;}
+.sub-badge{font-size:10px;font-weight:800;padding:2px 9px;border-radius:var(--rpill);}
+.sub-badge.active{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.sub-badge.expiring{background:var(--gold-bg);color:var(--gold);border:1px solid rgba(255,217,61,.2);}
+.sub-badge.expired{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,107,107,.2);}
+.sub-badge.free{background:var(--bg4);color:var(--text3);border:1px solid var(--border2);}
 .sb-bottom{padding:.75rem;border-top:1px solid var(--border);}
 .sb-user{display:flex;align-items:center;gap:9px;padding:8px;border-radius:var(--r8);margin-bottom:.5rem;}
 .sb-avatar{width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
@@ -324,15 +345,20 @@ input,textarea{font-family:'Inter',sans-serif;}
   </div>
   <div class="sb-divider"></div>
   <div class="sb-section-label">Recent Sessions</div>
+  <div class="sb-search-wrap">
+    <input class="sb-search" id="sb-search" type="text" placeholder="Search sessions…" oninput="filterHistory(this.value)"/>
+  </div>
   <div class="sb-history" id="sb-history">
     <div class="sb-empty-hist">No sessions yet. Start typing!</div>
   </div>
+  <button class="sb-hist-clear" onclick="clearAllSessions()">🗑 Clear all sessions</button>
   <div class="sb-bottom">
     <div class="sb-user">
       <div class="sb-avatar" id="sb-avatar">?</div>
       <div class="sb-user-info">
         <div class="sb-user-name" id="sb-name">Loading…</div>
         <span class="sb-user-plan plan-free" id="sb-plan">Free</span>
+        <div class="sub-days" id="sb-days-left"></div>
       </div>
     </div>
     <div id="sb-upgrade-wrap">
@@ -501,6 +527,10 @@ input,textarea{font-family:'Inter',sans-serif;}
     <h2>Settings</h2>
     <p class="modal-sub" id="settings-sub">Account preferences</p>
     <div class="settings-section">
+      <h3>Subscription</h3>
+      <div id="sub-status-wrap"></div>
+    </div>
+    <div class="settings-section">
       <h3>Account</h3>
       <div class="setting-row"><span class="setting-label">Name</span><span class="setting-value" id="set-name">—</span></div>
       <div class="setting-row"><span class="setting-label">Email</span><span class="setting-value" id="set-email">—</span></div>
@@ -536,7 +566,11 @@ function getSb(){if(!_sb)_sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);re
 
 const Auth={
   me(){return _currentUser;},
-  isPaid(){return _currentUser&&_currentUser.plan==='paid';},
+  isPaid(){
+    if(!_currentUser||_currentUser.plan!=='paid')return false;
+    if(!_currentUser.plan_expires_at)return true; // permanent paid (real purchase)
+    return new Date(_currentUser.plan_expires_at)>new Date(); // reward: check expiry
+  },
   canPDF(){const u=_currentUser;if(!u)return false;if(u.plan==='paid')return true;const m=new Date().toISOString().slice(0,7);return(u.month!==m?0:u.pdfs)<3;},
   trackPDF(){const u=_currentUser;if(!u)return;const m=new Date().toISOString().slice(0,7);if(u.month!==m){u.month=m;u.pdfs=0;}u.pdfs=(u.pdfs||0)+1;},
   async logout(){await getSb().auth.signOut();_currentUser=null;},
@@ -577,11 +611,13 @@ const Auth={
   $('set-plan').textContent=u.plan==='paid'?'Premium — Unlimited':'Free — 3 PDFs/month';
   $('settings-sub').textContent=u.email;
   loadHistory();
+  renderSubStatus();
 })();
 
 // ── SESSION HISTORY ──
 let _currentSessionId=null;
 let _saveProgressTimer=null;
+let _searchQuery='';
 
 function generateId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function getSessions(){return JSON.parse(localStorage.getItem('tfp_sessions')||'[]');}
@@ -592,7 +628,7 @@ function saveSession(name,type,pages){
   const id=generateId();
   _currentSessionId=id;
   sessions.unshift({id,name,type,date:Date.now(),pages:pages||[]});
-  if(sessions.length>30)sessions.pop();
+  if(sessions.length>50)sessions.pop();
   setSessions(sessions);
   loadHistory();
 }
@@ -606,26 +642,60 @@ function saveProgress(){
   setSessions(sessions);
 }
 
+function filterHistory(q){
+  _searchQuery=(q||'').toLowerCase();
+  loadHistory();
+}
+
 function loadHistory(){
-  const sessions=getSessions();
+  const all=getSessions();
+  const sessions=_searchQuery?all.filter(s=>s.name.toLowerCase().includes(_searchQuery)):all;
   const el=$('sb-history');
-  if(!sessions.length){el.innerHTML='<div class="sb-empty-hist">No sessions yet. Start typing!</div>';return;}
-  el.innerHTML=sessions.slice(0,25).map(s=>{
-    const d=new Date(s.date);
-    const label=d.toLocaleDateString('en',{month:'short',day:'numeric'});
-    const icon=s.type==='code'?'💻':'📄';
-    const active=s.id===_currentSessionId?' active':'';
-    const nm=s.name.replace(/"/g,'&quot;');
-    return `<div class="sb-hist-item${active}" onclick="openSession('${s.id}')" title="${nm}">
-      <span class="sb-hist-icon">${icon}</span>
-      <span class="sb-hist-name">${s.name}</span>
-      <span class="sb-hist-date">${label}</span>
-      <span class="sb-hist-actions">
-        <button class="sb-hist-act" onclick="event.stopPropagation();renameSession('${s.id}')" title="Rename">✏</button>
-        <button class="sb-hist-act del" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete">✕</button>
-      </span>
-    </div>`;
-  }).join('');
+  if(!sessions.length){
+    el.innerHTML=_searchQuery
+      ?'<div class="sb-empty-hist">No sessions match your search.</div>'
+      :'<div class="sb-empty-hist">No sessions yet. Start typing!</div>';
+    return;
+  }
+  // Group by date
+  const now=new Date();
+  const tod=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+  const yes=tod-86400000;
+  const wk=tod-6*86400000;
+  const groups=[
+    {label:'Today',items:[]},
+    {label:'Yesterday',items:[]},
+    {label:'Last 7 Days',items:[]},
+    {label:'Older',items:[]}
+  ];
+  sessions.forEach(s=>{
+    const t=s.date;
+    if(t>=tod)groups[0].items.push(s);
+    else if(t>=yes)groups[1].items.push(s);
+    else if(t>=wk)groups[2].items.push(s);
+    else groups[3].items.push(s);
+  });
+  let html='';
+  groups.forEach(g=>{
+    if(!g.items.length)return;
+    html+=`<div class="sb-group-lbl">${g.label}</div>`;
+    g.items.forEach(s=>{
+      const icon=s.type==='code'?'💻':'📄';
+      const active=s.id===_currentSessionId?' active':'';
+      const nm=s.name.replace(/"/g,'&quot;');
+      const label=new Date(s.date).toLocaleDateString('en',{month:'short',day:'numeric'});
+      html+=`<div class="sb-hist-item${active}" onclick="openSession('${s.id}')" title="${nm}">
+        <span class="sb-hist-icon">${icon}</span>
+        <span class="sb-hist-name">${s.name}</span>
+        <span class="sb-hist-date">${label}</span>
+        <span class="sb-hist-actions">
+          <button class="sb-hist-act" onclick="event.stopPropagation();renameSession('${s.id}')" title="Rename">✏</button>
+          <button class="sb-hist-act del" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete">✕</button>
+        </span>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
 }
 
 function openSession(id){
@@ -667,12 +737,90 @@ function deleteSession(id){
   const sessions=getSessions();
   const idx=sessions.findIndex(s=>s.id===id);
   if(idx===-1)return;
-  if(!confirm('Delete "'+sessions[idx].name+'"?'))return;
+  if(!confirm('Delete "'+sessions[idx].name+'"?\nThis cannot be undone.'))return;
   sessions.splice(idx,1);
   setSessions(sessions);
   if(_currentSessionId===id){_currentSessionId=null;startNewSession();}
   loadHistory();
 }
+
+function clearAllSessions(){
+  const sessions=getSessions();
+  if(!sessions.length)return;
+  if(!confirm('Delete all '+sessions.length+' sessions?\nThis cannot be undone.'))return;
+  localStorage.removeItem('tfp_sessions');
+  _currentSessionId=null;
+  _searchQuery='';
+  const srch=$('sb-search');if(srch)srch.value='';
+  startNewSession();
+}
+
+// ── SUBSCRIPTION STATUS ──
+function getSubInfo(){
+  const u=_currentUser;
+  if(!u||u.plan!=='paid')return{type:'free'};
+  if(!u.plan_expires_at)return{type:'permanent',label:'Premium',status:'Active',badge:'active'};
+  const exp=new Date(u.plan_expires_at);
+  const daysLeft=Math.ceil((exp-new Date())/86400000);
+  const expStr=exp.toLocaleDateString('en',{year:'numeric',month:'long',day:'numeric'});
+  if(daysLeft<=0)return{type:'expired',label:'Premium',status:'Expired',badge:'expired',expStr,daysLeft:0};
+  if(daysLeft<=7)return{type:'expiring',label:'Premium',status:'Expiring Soon',badge:'expiring',expStr,daysLeft};
+  return{type:'active',label:'Premium',status:'Active',badge:'active',expStr,daysLeft};
+}
+
+function renderSubStatus(){
+  const info=getSubInfo();
+  // Sidebar days left
+  const daysEl=$('sb-days-left');
+  if(daysEl){
+    if(info.type==='permanent'){daysEl.textContent='';}
+    else if(info.type==='free'){daysEl.textContent='3 PDFs/month';}
+    else if(info.daysLeft<=0){daysEl.textContent='Expired';daysEl.className='sub-days danger';}
+    else if(info.daysLeft<=7){daysEl.textContent=info.daysLeft+' days left';daysEl.className='sub-days warn';}
+    else{daysEl.textContent=info.daysLeft+' days left';daysEl.className='sub-days';}
+  }
+  // Settings modal card
+  const wrap=$('sub-status-wrap');
+  if(!wrap)return;
+  if(info.type==='free'){
+    wrap.innerHTML=`<div class="sub-card">
+      <div class="sub-row"><span class="sub-key">Plan</span><span class="sub-badge free">Free</span></div>
+      <div class="sub-row"><span class="sub-key">PDF Limit</span><span class="sub-val">3 per month</span></div>
+      <div class="sub-row"><span class="sub-key">Code Languages</span><span class="sub-val">5 free languages</span></div>
+    </div>`;
+    return;
+  }
+  const daysRow=info.daysLeft!==undefined
+    ?`<div class="sub-row"><span class="sub-key">Days Remaining</span><span class="sub-val" style="color:${info.daysLeft<=7?'var(--gold)':info.daysLeft<=0?'var(--red)':'inherit'}">${info.daysLeft>0?info.daysLeft+' days':'Expired'}</span></div>`
+    :'';
+  const expRow=info.expStr
+    ?`<div class="sub-row"><span class="sub-key">Expires</span><span class="sub-val">${info.expStr}</span></div>`
+    :`<div class="sub-row"><span class="sub-key">Expires</span><span class="sub-val">Never</span></div>`;
+  wrap.innerHTML=`<div class="sub-card">
+    <div class="sub-row"><span class="sub-key">Plan</span><span class="sub-val">${info.label}</span></div>
+    <div class="sub-row"><span class="sub-key">Status</span><span class="sub-badge ${info.badge}">${info.status}</span></div>
+    ${expRow}${daysRow}
+    <div class="sub-row"><span class="sub-key">PDF Uploads</span><span class="sub-val">Unlimited</span></div>
+    <div class="sub-row"><span class="sub-key">Languages</span><span class="sub-val">All 18 unlocked</span></div>
+  </div>
+  ${info.type==='expiring'?`<button class="form-btn" style="margin-top:.5rem" onclick="closeSettings();openUpgrade()">Renew Plan →</button>`:''}
+  ${info.type==='expired'?`<button class="form-btn" style="margin-top:.5rem" onclick="closeSettings();openUpgrade()">Reactivate Premium →</button>`:''}`;
+}
+
+// Auto-check expiry every 60 seconds
+setInterval(()=>{
+  const u=_currentUser;
+  if(!u||u.plan!=='paid'||!u.plan_expires_at)return;
+  if(new Date(u.plan_expires_at)<=new Date()){
+    u.plan='free';
+    const planEl=$('sb-plan'),topPlan=$('top-plan');
+    planEl.textContent='Free (3 PDFs/mo)';planEl.className='sb-user-plan plan-free';
+    topPlan.textContent='Free';topPlan.className='tb-plan-badge plan-free';
+    $('sb-upgrade-wrap').style.display='';
+    buildProgGrid();
+    renderSubStatus();
+  }
+},60000);
 
 // ── WORKSPACE / MODES ──
 let currentMode='pdf';
@@ -768,6 +916,7 @@ const PROG=[
 
 function buildProgGrid(){
   const grid=$('prog-grid');
+  grid.innerHTML='';
   const isPaid=Auth.isPaid();
   PROG.forEach(l=>{
     const btn=document.createElement('button');
@@ -936,7 +1085,7 @@ function upgradePlan(){
 // ── MODALS ──
 function openUpgrade(){$('upgrade-modal').classList.remove('hidden');}
 function closeUpgrade(){$('upgrade-modal').classList.add('hidden');}
-function openSettings(){$('settings-modal').classList.remove('hidden');}
+function openSettings(){$('settings-modal').classList.remove('hidden');renderSubStatus();}
 function closeSettings(){$('settings-modal').classList.add('hidden');$('set-msg').textContent='';$('set-msg').className='auth-msg';}
 
 async function doChangePassword(){
