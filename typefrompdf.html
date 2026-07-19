@@ -875,8 +875,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
 <nav>
   <div class="nav-logo" onclick="scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer">Type<span class="gr">FromPDF</span></div>
   <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#how">How It Works</a>
+    <a href="/" onclick="event.preventDefault();document.getElementById('features').scrollIntoView({behavior:'smooth'})">Features</a>
+    <a href="/" onclick="event.preventDefault();document.getElementById('how').scrollIntoView({behavior:'smooth'})">How It Works</a>
     <a href="/app">Try It</a>
     <a href="/pricing">Pricing</a>
     <a href="/about">About</a>
@@ -1138,8 +1138,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
       <div class="footer-col">
         <h4>Product</h4>
         <ul>
-          <li><a href="#features">Features</a></li>
-          <li><a href="#how">How It Works</a></li>
+          <li><a href="/" onclick="event.preventDefault();document.getElementById('features').scrollIntoView({behavior:'smooth'})">Features</a></li>
+          <li><a href="/" onclick="event.preventDefault();document.getElementById('how').scrollIntoView({behavior:'smooth'})">How It Works</a></li>
           <li><a href="/app">Try It Free</a></li>
           <li><a href="/pricing">Pricing</a></li>
         </ul>
