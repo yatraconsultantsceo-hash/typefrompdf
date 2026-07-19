@@ -22,10 +22,14 @@
 <meta name="twitter:title" content="TypeFromPDF — Build Real Typing Speed with Your Own Content"/>
 <meta name="twitter:description" content="Upload any PDF and type over ghost text. Practice with your own notes, textbooks, and code. 100% private."/>
 <meta name="twitter:image" content="https://typefrompdf.com/og-image.png"/>
-<!-- Schema.org WebApplication -->
+<!-- Schema.org -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"TypeFromPDF","url":"https://typefrompdf.com","description":"Upload any PDF and type over ghost text to build real typing speed, accuracy, and memory with your own content.","applicationCategory":"EducationalApplication","operatingSystem":"Web","offers":[{"@type":"Offer","name":"Free Plan","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Monthly Plan","price":"17","priceCurrency":"USD","billingIncrement":"P1M"},{"@type":"Offer","name":"Yearly Plan","price":"180","priceCurrency":"USD","billingIncrement":"P1Y"}],"author":{"@type":"Person","name":"Balakumar S"},"featureList":["PDF typing practice","18 programming languages","Real-time WPM tracking","100% private in-browser processing"]}
+{"@context":"https://schema.org","@type":"WebSite","name":"TypeFromPDF","url":"https://typefrompdf.com","description":"The only typing practice tool that uses your own PDFs, notes, and code.","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://typefrompdf.com/?q={search_term_string}"},"query-input":"required name=search_term_string"}}
 </script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"TypeFromPDF","url":"https://typefrompdf.com","description":"Upload any PDF and type over ghost text to build real typing speed, accuracy, and memory with your own content. Practice with your study notes, textbooks, or code.","applicationCategory":"EducationalApplication","operatingSystem":"Web Browser","browserRequirements":"Requires JavaScript","offers":[{"@type":"Offer","name":"Free Plan","price":"0","priceCurrency":"USD","description":"3 PDF uploads per month, 5 coding languages"},{"@type":"Offer","name":"Student Plan","price":"79","priceCurrency":"USD","billingPeriod":"P1Y","description":"All premium features, requires .edu email"},{"@type":"Offer","name":"Monthly Plan","price":"17","priceCurrency":"USD","billingPeriod":"P1M","description":"Unlimited PDFs, all 18 coding languages"},{"@type":"Offer","name":"Yearly Plan","price":"180","priceCurrency":"USD","billingPeriod":"P1Y","description":"All premium features at $15/month effective rate"}],"featureList":["PDF typing practice","Type from PDF","18 programming languages","Real-time WPM and accuracy tracking","100% private in-browser PDF processing","Student typing practice","Code typing practice"],"screenshot":"https://typefrompdf.com/og-image.png","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8","reviewCount":"12"}}
+</script>
+<meta name="keywords" content="PDF typing practice, type from PDF, typing practice online, typing speed test, improve typing speed, typing accuracy, student typing practice, code typing practice, WPM test, online typing tool, typing software, PDF typing website, learn typing online"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <!-- Paddle Payments -->
@@ -758,7 +762,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
 
 <!-- TOP BANNER -->
 <div class="top-banner">
-  🎓 Student Plan: $49/year — Less than $4/month · Yearly only.<a href="/pricing">Verify your .edu email →</a>
+  🎓 Student Plan: $79/year — Less than $7/month · Yearly only.<a href="/pricing">Verify your .edu email →</a>
 </div>
 
 <!-- AUTH MODAL -->
@@ -1077,7 +1081,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 2
     <div class="plan-mini student">
       <div class="pm-badge green">🎓 For Students Only</div>
       <div class="pm-tier">Student</div>
-      <div class="pm-price">$49 <span class="pm-period">/ year</span></div>
+      <div class="pm-price">$79 <span class="pm-period">/ year</span></div>
       <div class="pm-note" style="color:var(--green);font-weight:600">Less than $4/month — yearly only</div>
       <ul class="pm-features">
         <li>Unlimited PDF uploads</li>
@@ -1293,7 +1297,7 @@ function openPaddleCheckout(plan){
     Paddle.Checkout.open({
       items:[{priceId:studentPriceId,quantity:1}],
       customer:{email:eduEmail},
-      settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($49/yr)',cancelUrl:'https://typefrompdf.com/cancel',theme:'dark',displayMode:'overlay'},
+      settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($79/yr)',cancelUrl:'https://typefrompdf.com/cancel',theme:'dark',displayMode:'overlay'},
       eventCallback(data){
         if(data.name==='checkout.completed'){Auth.updatePlan('paid').then(()=>updateNav());}
       }

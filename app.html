@@ -472,7 +472,7 @@ input,textarea{font-family:'Inter',sans-serif;}
     <div class="modal-plans">
       <div class="modal-plan student" onclick="closeUpgrade();openPaddleCheckout('student')">
         <h4>🎓 Student</h4>
-        <div class="price" style="color:var(--green)">$49<span style="font-size:.8rem;font-weight:500;color:var(--text2)">/yr</span></div>
+        <div class="price" style="color:var(--green)">$79<span style="font-size:.8rem;font-weight:500;color:var(--text2)">/yr</span></div>
         <div class="note">Requires .edu email · Best value</div>
       </div>
       <div class="modal-plan" onclick="closeUpgrade();openPaddleCheckout('yearly')">
@@ -825,7 +825,7 @@ function openPaddleCheckout(plan){
     Paddle.Checkout.open({
       items:[{priceId:'pri_01kxtr2axam5bxkp3ck3xb8vak',quantity:1}],
       customer:{email:edu},
-      settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($49/yr)',cancelUrl:'https://typefrompdf.com/app.html',theme:'dark',displayMode:'overlay'},
+      settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($79/yr)',cancelUrl:'https://typefrompdf.com/app.html',theme:'dark',displayMode:'overlay'},
       eventCallback(data){if(data.name==='checkout.completed')upgradePlan();}
     });
     return;
