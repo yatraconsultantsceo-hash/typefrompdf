@@ -683,10 +683,12 @@ const PROG=[
 
 function buildProgGrid(){
   const grid=$('prog-grid');
+  const isPaid=Auth.isPaid();
   PROG.forEach(l=>{
     const btn=document.createElement('button');
-    btn.className='prog-btn'+(l.free?'':' locked');
-    btn.innerHTML=`<div class="prog-name">${l.name}</div><span class="prog-badge ${l.free?'badge-free':'badge-pro'}">${l.free?'FREE':'PRO'}</span>`;
+    btn.className='prog-btn'+(l.free||isPaid?'':' locked');
+    const badge=isPaid?'':`<span class="prog-badge ${l.free?'badge-free':'badge-pro'}">${l.free?'FREE':'PRO'}</span>`;
+    btn.innerHTML=`<div class="prog-name">${l.name}</div>${badge}`;
     btn.onclick=()=>{
       if(!l.free&&!Auth.isPaid()){openUpgrade();return;}
       document.querySelectorAll('.prog-btn').forEach(b=>b.classList.remove('active'));
