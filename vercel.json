@@ -27,7 +27,8 @@
     { "source": "/success",             "destination": "/success.html" },
     { "source": "/cancel",              "destination": "/cancel.html" },
     { "source": "/dashboard",           "destination": "/dashboard.html" },
-    { "source": "/settings",            "destination": "/settings.html" }
+    { "source": "/settings",            "destination": "/settings.html" },
+    { "source": "/creator-rewards",     "destination": "/ugc.html" }
   ],
   "headers": [
     {
