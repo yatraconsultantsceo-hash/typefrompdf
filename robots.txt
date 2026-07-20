@@ -14,5 +14,6 @@ Disallow: /success
 Disallow: /cancel
 Disallow: /og-image-generator.html
 Disallow: /favicon-generator.html
+Disallow: /ugc.html
 
 Sitemap: https://typefrompdf.com/sitemap.xml
