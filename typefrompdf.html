@@ -1700,12 +1700,18 @@ buildProgGrid();
       heroBtns.innerHTML=`<a href="/app" class="btn-primary" style="text-decoration:none;">Open Workspace →</a><button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>`;
     }
   }
-  // Handle ?openAuth= URL param
+  // Handle ?openAuth= URL param — only open modal if user is NOT already logged in
   const params=new URLSearchParams(window.location.search);
   const tab=params.get('openAuth');
   if(tab==='su'||tab==='li'){
-    setTimeout(()=>openAuth(tab),300);
     history.replaceState({},'','/');
+    if(!Auth.me()){
+      // Not logged in — show auth modal
+      setTimeout(()=>openAuth(tab),300);
+    } else if(tab==='li'){
+      // Already logged in and came from pricing — redirect back to pricing
+      window.location.href='/pricing';
+    }
   }
 })();
 </script>

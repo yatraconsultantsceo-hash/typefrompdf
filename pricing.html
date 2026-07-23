@@ -26,6 +26,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script>window.addEventListener('load',()=>{if(typeof Paddle!=='undefined')Paddle.Setup({token:'live_e012be157ab7779131b2afb0f6e'});});</script>
 <style>
@@ -480,11 +481,24 @@ function toggleFaq(btn){
   document.querySelectorAll('.faq-item.open').forEach(el=>{el.classList.remove('open');el.querySelector('.faq-a').style.maxHeight='0';});
   if(!isOpen){item.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}
 }
-function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
-function openPaddleCheckout(plan){
-  const u=JSON.parse(localStorage.getItem('tfp_c')||'null');
-  if(!u){window.location.href='/?openAuth=su';return;}
+// ── SUPABASE AUTH ──
+const SUPABASE_URL='https://acedhshtcdffdwhdfyik.supabase.co';
+const SUPABASE_KEY='sb_publishable_SMwJ2SzqTmrxGJeE2Qu2VA_8mDWG5Qo';
+let _sb=null;
+function getSb(){if(!_sb)_sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);return _sb;}
+
+async function getCurrentUser(){
+  try{
+    const{data:{session}}=await getSb().auth.getSession();
+    if(!session||!session.user)return null;
+    return{email:session.user.email,id:session.user.id};
+  }catch(e){return null;}
+}
+
+async function openPaddleCheckout(plan){
+  const u=await getCurrentUser();
+  if(!u){window.location.href='/?openAuth=li';return;}
 
   // Student plan — verify .edu email first
   if(plan==='student'){
@@ -494,19 +508,11 @@ function openPaddleCheckout(plan){
       alert('Student plan requires a .edu email address. Please use your college email.');return;
     }
     const studentPriceId='pri_01kxtr2axam5bxkp3ck3xb8vak';
-
     if(typeof Paddle==='undefined'){alert('Payment system is loading. Please try again.');return;}
     Paddle.Checkout.open({
       items:[{priceId:studentPriceId,quantity:1}],
       customer:{email:eduEmail},
-      settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($79/yr)',cancelUrl:'https://typefrompdf.com/cancel',theme:'dark',displayMode:'overlay'},
-      eventCallback(data){
-        if(data.name==='checkout.completed'){
-          const us=JSON.parse(localStorage.getItem('tfp_u')||'[]');
-          const i=us.findIndex(x=>x.email===u.email);
-          if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
-        }
-      }
+      settings:{successUrl:'https://typefrompdf.com/success?plan=Student+Plan+($79/yr)',cancelUrl:'https://typefrompdf.com/cancel',theme:'dark',displayMode:'overlay'}
     });
     return;
   }
@@ -530,13 +536,6 @@ function openPaddleCheckout(plan){
       cancelUrl:'https://typefrompdf.com/cancel',
       theme:'dark',
       displayMode:'overlay',
-    },
-    eventCallback(data){
-      if(data.name==='checkout.completed'){
-        const us=JSON.parse(localStorage.getItem('tfp_u')||'[]');
-        const i=us.findIndex(x=>x.email===u.email);
-        if(i>=0){us[i].plan='paid';localStorage.setItem('tfp_u',JSON.stringify(us));localStorage.setItem('tfp_c',JSON.stringify(us[i]));}
-      }
     }
   });
 }
