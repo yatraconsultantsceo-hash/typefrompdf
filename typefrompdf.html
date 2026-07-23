@@ -1211,6 +1211,11 @@ const Auth={
         setTimeout(()=>openAuth('newpw'),300);
       } else if(event==='SIGNED_OUT'){
         _currentUser=null;
+        updateNav();
+      } else if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED')&&session){
+        const{data:p}=await getSb().from('profiles').select('*').eq('id',session.user.id).single();
+        _currentUser=p?{...p,email:session.user.email}:null;
+        updateNav();
       }
     });
     const{data:{session}}=await sb.auth.getSession();
@@ -1282,9 +1287,10 @@ const Auth={
 };
 
 // ── PADDLE CHECKOUT ──
-function openPaddleCheckout(plan){
-  const u=Auth.me();
-  if(!u){openAuth('su');return;}
+async function openPaddleCheckout(plan){
+  let u=Auth.me();
+  if(!u){u=await Auth.init();updateNav();}
+  if(!u){openAuth('li');return;}
 
   // Student plan — verify .edu email
   if(plan==='student'){
